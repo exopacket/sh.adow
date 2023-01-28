@@ -23,8 +23,7 @@ public class Main {
                         listProjects();
                         break;
                     case "capture":
-                        break;
-                    case "suspend":
+                        startInteractiveShell();
                         break;
                 }
                 System.exit(0);
@@ -310,6 +309,10 @@ public class Main {
             System.exit(2);
         }
 
+    }
+
+    private static void startInteractiveShell() {
+        InteractiveShell.main();
     }
 
 }

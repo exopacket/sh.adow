@@ -11,7 +11,7 @@ public class RunCommand {
     public static void noOut(String cmd) throws IOException {
 
             ProcessBuilder builder = new ProcessBuilder();
-            builder.command("/bin/bash", "-c", cmd);
+            builder.command("/bin/sh", "-c", cmd);
             builder.start();
 
     }
@@ -19,7 +19,7 @@ public class RunCommand {
     public static void runAndWait(String cmd) throws IOException, InterruptedException {
 
         ProcessBuilder builder = new ProcessBuilder();
-        builder.command("/bin/bash", "-c", cmd);
+        builder.command("/bin/sh", "-c", cmd);
         Process process = builder.start();
 
         process.waitFor();
@@ -29,7 +29,7 @@ public class RunCommand {
     public static void streamOut(String cmd) throws IOException, InterruptedException {
 
         ProcessBuilder builder = new ProcessBuilder();
-        builder.command("/bin/bash", "-c", cmd);
+        builder.command("/bin/sh", "-c", cmd);
         Process process = builder.start();
 
         StringBuilder output = new StringBuilder();
@@ -46,10 +46,40 @@ public class RunCommand {
 
     }
 
+    public static String interactive(String cmd) throws IOException, InterruptedException {
+
+        ProcessBuilder builder = new ProcessBuilder();
+        builder.command("/bin/sh", "-c", cmd);
+        Process process = builder.start();
+
+        StringBuilder output = new StringBuilder();
+
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()));
+
+        String line;
+        String pwd = "";
+        boolean flag = false;
+        while ((line = reader.readLine()) != null) {
+            if(flag) {
+                pwd = line;
+                break;
+            } else {
+                if(line.equals("#!")) flag = true;
+                else System.out.println(line);
+            }
+        }
+
+        process.waitFor();
+
+        return pwd;
+
+    }
+
     public static String[] withOut(String cmd) throws IOException, InterruptedException {
 
         ProcessBuilder builder = new ProcessBuilder();
-        builder.command("/bin/bash", "-c", cmd);
+        builder.command("/bin/sh", "-c", cmd);
         Process process = builder.start();
 
         StringBuilder output = new StringBuilder();
@@ -74,7 +104,7 @@ public class RunCommand {
     public static int background(String cmd) throws IOException, InterruptedException {
 
         ProcessBuilder builder = new ProcessBuilder();
-        builder.command("/bin/bash", "-c", cmd, "&");
+        builder.command("/bin/sh", "-c", cmd, "&");
         Process process = builder.start();
 
         StringBuilder output = new StringBuilder();
