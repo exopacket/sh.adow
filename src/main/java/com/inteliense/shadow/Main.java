@@ -22,6 +22,10 @@ public class Main {
                     case "list":
                         listProjects();
                         break;
+                    case "capture":
+                        break;
+                    case "suspend":
+                        break;
                 }
                 System.exit(0);
             }
@@ -283,6 +287,11 @@ public class Main {
 
         System.err.println("Invalid usage");
         System.exit(1);
+
+    }
+
+    private static void init() {
+        superuser();
 
     }
 
