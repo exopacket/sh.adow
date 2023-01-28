@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -17,7 +18,12 @@ public class Main {
 
         if(args.length >= 1) {
             if(args[0].equals("cli")) {
-
+                switch(args[1]) {
+                    case "list":
+                        listProjects();
+                        break;
+                }
+                System.exit(0);
             }
         }
 
@@ -29,7 +35,6 @@ public class Main {
                         superuser();
                         downloadPackageWithDependencies(args);
                         break;
-                    case "list":
                     case "exec":
                         executeCommand(args);
                         break;
@@ -279,6 +284,14 @@ public class Main {
         System.err.println("Invalid usage");
         System.exit(1);
 
+    }
+
+    private static void listProjects() {
+        try {
+            RunCommand.streamOut("ls " + getConfigDir());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void superuser() {
