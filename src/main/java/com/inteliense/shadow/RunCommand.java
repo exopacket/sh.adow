@@ -52,8 +52,6 @@ public class RunCommand {
         builder.command("/bin/sh", "-c", cmd);
         Process process = builder.start();
 
-        StringBuilder output = new StringBuilder();
-
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()));
 

@@ -12,7 +12,7 @@ public class SHA {
     {
         try {
 
-            MessageDigest md = MessageDigest.getInstance("com.inteliense.shadow.SHA-1");
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
 
             byte[] messageDigest = md.digest(input.getBytes());
 

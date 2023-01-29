@@ -25,7 +25,7 @@ public class InteractiveShell {
 
     private static String branchName;
 
-    public static void capture() {
+    public static void capture() throws IOException {
 
         branchName = "branch_" + SHA.getSha1("" + System.currentTimeMillis());
         String pwd = "/home/ryan";
@@ -104,9 +104,17 @@ public class InteractiveShell {
 
                     default:
 
-                        String pwdCommand = "cd " + fixPath(pwd) + " && " + command + " && echo \"#!\" && pwd";
+                        String pwdCommand = "cd " + fixPath(pwd) + " && " + command;
                         try {
-                            pwd = RunCommand.interactive(pwdCommand);
+                            InteractiveCommand cmd = new InteractiveCommand(SHA.getSha1("" + System.currentTimeMillis()), pwdCommand) {
+                                @Override
+                                public void inputReceived(String input) {
+                                    System.out.println("INPUT RECEIVED" + input);
+                                }
+                            };
+                            pwd = cmd.getPwd();
+                            //pwd = new InteractiveCommand().execute(pwdCommand);
+                            //RunCommand.interactive(pwdCommand);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
