@@ -25,7 +25,7 @@ public class InteractiveShell {
 
     public static void main() {
 
-        String pwd = "";
+        String pwd = "/home/ryan";
 
         startup();
 
@@ -40,9 +40,9 @@ public class InteractiveShell {
             }
 
             //parse syntax... more to do in the future
-            String[] strings = matches(input, "(\"|'|`)(.*)(\\1)");
+            String[] strings = matches(input, "/(\"|'|`)(.*)(\\1)/");
             String noStrings = macroize(input, "\34", strings);
-            String[] commands = matches(noStrings, "[^\\];");
+            String[] commands = matches(noStrings, "/[^\\\\];/");
             ArrayList<String[]> list = new ArrayList<>();
 
             for(int i=0; i< commands.length; i++) {
@@ -66,7 +66,7 @@ public class InteractiveShell {
                 String[] commandArr = arr[i];
                 String first = commandArr[0];
                 String command = "";
-                for(int x=0; x< commandArr.length; x++) command += commandArr[x];
+                for(int x=0; x< commandArr.length; x++) command += commandArr[x] + " ";
 
                 switch(first) {
 
@@ -101,7 +101,7 @@ public class InteractiveShell {
 
                     default:
 
-                        String pwdCommand = "cd " + fixPath(pwd) + " && {" + command + "}; && echo \"#!\" && pwd";
+                        String pwdCommand = "cd " + fixPath(pwd) + " && " + command + " && echo \"#!\" && pwd";
                         try {
                             pwd = RunCommand.interactive(pwdCommand);
                         } catch (Exception e) {
@@ -137,19 +137,19 @@ public class InteractiveShell {
         }
     }
     private static void variable(String[] command) {
-
+        System.out.println("var");
     }
 
     private static void saveCapture(String branch) {
-
+        System.out.println("saveCapture");
     }
 
     private static void setCollecting(boolean val) {
         isCollecting = val;
         if(val) {
-            System.out.println("\n\n" + ANSI_RED + "You have resumed collecting command information.\nAll commands will be logged." + ANSI_RESET);
+            System.out.println("\n" + ANSI_GREEN + "You have resumed collecting command information.\nAll commands will be logged." + ANSI_RESET + "\n");
         } else {
-            System.out.println("\n\n" + ANSI_CYAN + "You have paused collecting command information.\nAll commands will be ignored." + ANSI_RESET);
+            System.out.println("\n" + ANSI_CYAN + "You have paused collecting command information.\nAll commands will be ignored." + ANSI_RESET + "\n");
         }
     }
     private static String macroize(String in, String replacement, String[] matches) {
@@ -166,7 +166,8 @@ public class InteractiveShell {
         ArrayList<String> matches = new ArrayList<String>();
         Matcher m = Pattern.compile(pattern).matcher(in);
         while(m.find()) matches.add(m.group());
-        return matches.toArray(new String[0]);
+        if(matches.size() == 0) matches.add(in);
+        return matches.toArray(new String[matches.size()]);
 
     }
 
@@ -176,7 +177,7 @@ public class InteractiveShell {
     }
 
     private static void showInfo() {
-
+        System.out.println("showInfo");
     }
 
     private static void startup() {
@@ -184,7 +185,7 @@ public class InteractiveShell {
     }
 
     private static void printHelp() {
-
+        System.out.println("printHelp");
     }
 
 }
