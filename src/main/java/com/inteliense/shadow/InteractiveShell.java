@@ -23,8 +23,11 @@ public class InteractiveShell {
 
     private static ArrayList<String> history = new ArrayList<String>();
 
-    public static void main() {
+    private static String branchName;
 
+    public static void capture() {
+
+        branchName = "branch_" + SHA.getSha1("" + System.currentTimeMillis());
         String pwd = "/home/ryan";
 
         startup();
@@ -32,7 +35,7 @@ public class InteractiveShell {
         boolean exit = false;
         while (!exit) {
 
-            System.out.print("/bin/sh (" + ((isCollecting) ? "collecting" : "ignoring") + ") $ ");
+            System.out.print(ANSI_BLUE + "/bin/sh " + ((isCollecting) ? (ANSI_GREEN + "(collecting)") : (ANSI_RED + "(ignoring)")) + " " + ANSI_PURPLE + "$ " + ANSI_RESET);
             String input = scnr.nextLine().trim();
             if(input.equals("")) {
                 showInfo();
@@ -85,12 +88,12 @@ public class InteractiveShell {
                     case "continue":
                         setCollecting(true);
                         break;
-                    case "export":
-                    case "var":
-                        variable(commandArr);
-                        break;
+//                    case "export":
+//                    case "var":
+//                        variable(commandArr);
+//                        break;
                     case "branch":
-                        branch(commandArr);
+                        branch();
                         break;
                     case "exit":
                         exit = true;
@@ -118,7 +121,7 @@ public class InteractiveShell {
 
         }
 
-        saveCapture("");
+        saveCapture(branchName);
 
     }
 
@@ -126,15 +129,37 @@ public class InteractiveShell {
 
     }
     private static void forget(String[] command) {
-
+        System.out.println("Confirm. Are you sure you would like to forget every command executed from this branch?");
     }
     private static void last(String[] command) {
+        if(history.size() == 0) return;
+        if(command.length == 1) {
+            System.out.println(" -- Last command -- ");
+            System.out.println("       " + history.get(history.size() - 1));
+            System.out.println(" Type remove to remove or leave blank to return to the shell >> ");
+        } else if(command.length == 2) { //last [#]
 
-    }
-    private static void branch(String[] command) {
-        if(command.length > 1) {
-
+        } else {
+            printHelp();
         }
+    }
+    private static void branch() {
+        System.out.print("\nYou've selected to start a new branch." +
+                "\nEnter a name for the branch you're ending (leave blank to cancel): ");
+        String prevBranch = scnr.nextLine().trim().toLowerCase().replaceAll("\\s+", "_");
+        if(prevBranch.equals("")) {
+            System.out.println("You have chosen to cancel switching to a new branch.");
+            return;
+        }
+        System.out.print("Enter a name for the branch you're starting (leave blank to cancel): ");
+        String currBranch = scnr.nextLine().trim().toLowerCase().replaceAll("\\s+", "_");
+        if(currBranch.equals("")) {
+            System.out.println("You have chosen to cancel switching to a new branch.");
+            return;
+        }
+        saveCapture(prevBranch);
+        System.out.println("\nThe previous branch has been saved and a new branch has started.\n");
+        branchName = currBranch;
     }
     private static void variable(String[] command) {
         System.out.println("var");

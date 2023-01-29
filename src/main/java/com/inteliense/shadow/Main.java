@@ -312,7 +312,7 @@ public class Main {
     }
 
     private static void startInteractiveShell() {
-        InteractiveShell.main();
+        InteractiveShell.capture();
     }
 
 }
