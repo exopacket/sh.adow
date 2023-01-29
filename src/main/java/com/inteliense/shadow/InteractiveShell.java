@@ -32,7 +32,7 @@ public class InteractiveShell {
         boolean exit = false;
         while (!exit) {
 
-            System.out.print("/bin/sh (" + ((isCollecting) ? "collecting" : "paused") + ") $ ");
+            System.out.print("/bin/sh (" + ((isCollecting) ? "collecting" : "ignoring") + ") $ ");
             String input = scnr.nextLine().trim();
             if(input.equals("")) {
                 showInfo();
@@ -43,40 +43,57 @@ public class InteractiveShell {
             String[] strings = matches(input, "(\"|'|`)(.*)(\\1)");
             String noStrings = macroize(input, "\34", strings);
             String[] commands = matches(noStrings, "[^\\];");
+            ArrayList<String[]> list = new ArrayList<>();
+
+            for(int i=0; i< commands.length; i++) {
+                list.add(commands[i].split("\\s+"));
+            }
+
+            String[][] arr = list.toArray(String[][]::new);
 
             int curr = 0;
-            for(int i=0; i<commands.length; i++) {
-                while(commands[i].indexOf(strings[curr]) >= 0) {
-                    commands[i].replaceFirst("\34", strings[curr]);
-                    curr++;
+            for(int i=0; i< arr.length; i++) {
+                for(int x=0; x<arr[i].length; x++) {
+                    if(arr[i][x].equals("\34")) {
+                        arr[i][x] = strings[curr];
+                        curr++;
+                    }
                 }
             }
 
-            for(int i=0; i<commands.length; i++) {
+            for(int i=0; i<arr.length; i++) {
 
-                String command = commands[i];
-                String[] parts = command.split("\\s+");
-                String first = parts[0];
+                String[] commandArr = arr[i];
+                String first = commandArr[0];
+                String command = "";
+                for(int x=0; x< commandArr.length; x++) command += commandArr[x];
 
                 switch(first) {
 
                     case "edit":
+                        edit(pwd, commandArr);
                         break;
                     case "ignore":
-                        break;
-                    case "forget":
-                        break;
-                    case "pause":
                         setCollecting(false);
                         break;
+                    case "forget":
+                        forget(commandArr);
+                        break;
                     case "last":
+                        last(commandArr);
                         break;
                     case "continue":
                         setCollecting(true);
                         break;
+                    case "export":
                     case "var":
+                        variable(commandArr);
+                        break;
+                    case "branch":
+                        branch(commandArr);
                         break;
                     case "exit":
+                        exit = true;
                         break;
                     case "help":
                         printHelp();
@@ -101,6 +118,30 @@ public class InteractiveShell {
 
         }
 
+        saveCapture("");
+
+    }
+
+    private static void edit(String pwd, String[] command) {
+
+    }
+    private static void forget(String[] command) {
+
+    }
+    private static void last(String[] command) {
+
+    }
+    private static void branch(String[] command) {
+        if(command.length > 1) {
+
+        }
+    }
+    private static void variable(String[] command) {
+
+    }
+
+    private static void saveCapture(String branch) {
+
     }
 
     private static void setCollecting(boolean val) {
@@ -111,7 +152,6 @@ public class InteractiveShell {
             System.out.println("\n\n" + ANSI_CYAN + "You have paused collecting command information.\nAll commands will be ignored." + ANSI_RESET);
         }
     }
-
     private static String macroize(String in, String replacement, String[] matches) {
         String out = in;
         for(int i=0; i<matches.length; i++) {
