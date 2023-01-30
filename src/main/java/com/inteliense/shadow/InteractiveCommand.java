@@ -32,16 +32,12 @@ public abstract class InteractiveCommand {
 
             writer = new PrintWriter(process.getOutputStream());
 
-
             watch();
             process.waitFor();
             writer.close();
             writer.flush();
             stdout.close();
             stderr.close();
-            //thr1.stop();
-            //thr2.stop();
-            //scnr.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,9 +113,6 @@ public abstract class InteractiveCommand {
         inputThr.stop();
         outputThr.stop();
         errThr.stop();
-        //System.out.println("EOF");
-        //thr.join();
-        //inputThr.stop();
 
     }
 

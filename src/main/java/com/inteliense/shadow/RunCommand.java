@@ -158,4 +158,8 @@ public class RunCommand {
 
     }
 
+    public static String getUserHome() {
+        return System.getProperty("user.dir");
+    }
+
 }

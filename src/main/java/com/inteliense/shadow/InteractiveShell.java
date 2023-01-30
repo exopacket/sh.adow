@@ -28,7 +28,7 @@ public class InteractiveShell {
     public static void capture() throws IOException {
 
         branchName = "branch_" + SHA.getSha1("" + System.currentTimeMillis());
-        String pwd = "/home/ryan";
+        String pwd = RunCommand.getUserHome();
 
         startup();
 
