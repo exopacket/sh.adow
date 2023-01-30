@@ -8,9 +8,7 @@ import java.util.regex.Pattern;
 public class InteractiveShell {
 
     private static Scanner scnr = new Scanner(System.in);
-
     private static boolean isCollecting = true;
-
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -35,7 +33,7 @@ public class InteractiveShell {
         boolean exit = false;
         while (!exit) {
 
-            System.out.print(ANSI_BLUE + "/bin/sh " + ((isCollecting) ? (ANSI_GREEN + "(collecting)") : (ANSI_RED + "(ignoring)")) + " " + ANSI_PURPLE + "$ " + ANSI_RESET);
+            System.out.print(ANSI_BLUE + getUsername() + ANSI_RESET + " : " + ANSI_PURPLE  + getDirFromPath(pwd) + " " + ((isCollecting) ? (ANSI_GREEN + "(collecting)") : (ANSI_RED + "(ignoring)")) + " " + ANSI_PURPLE + "$ " + ANSI_RESET);
             String input = scnr.nextLine().trim();
             if(input.equals("")) {
                 showInfo();
@@ -88,10 +86,10 @@ public class InteractiveShell {
                     case "continue":
                         setCollecting(true);
                         break;
-//                    case "export":
-//                    case "var":
-//                        variable(commandArr);
-//                        break;
+                    case "export":
+                    case "var":
+                        variable(commandArr);
+                        break;
                     case "branch":
                         branch();
                         break;
@@ -217,6 +215,14 @@ public class InteractiveShell {
 
     private static void printHelp() {
         System.out.println("printHelp");
+    }
+
+    private static String getUsername() {
+        return System.getProperty("user.name");
+    }
+    private static String getDirFromPath(String path) {
+        String[] parts = path.split("/");
+        return parts[parts.length - 1];
     }
 
 }

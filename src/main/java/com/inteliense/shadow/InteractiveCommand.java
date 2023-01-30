@@ -2,6 +2,7 @@ package com.inteliense.shadow;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public abstract class InteractiveCommand {
 
@@ -33,7 +34,7 @@ public abstract class InteractiveCommand {
             writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
 
             watch();
-            process.waitFor();
+            process.waitFor(1000, TimeUnit.MILLISECONDS);
             writer.close();
             stdout.close();
             stderr.close();
@@ -85,10 +86,15 @@ public abstract class InteractiveCommand {
                     if (closed) return;
                     while (scnr.hasNextLine()) {
                         String input = scnr.nextLine();
-                        writer.write(input);
-                        writer.newLine();
-                        writer.flush();
-                        inputReceived(input);
+                        if(input.trim().toLowerCase().equals("exit")) {
+                            closed = true;
+                            break;
+                        } else {
+                               writer.write(input);
+                               writer.newLine();
+                               writer.flush();
+                               inputReceived(input);
+                        }
                         break;
                     }
                 }
