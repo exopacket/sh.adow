@@ -6,7 +6,7 @@ import java.util.Scanner;
 public abstract class InteractiveCommand {
 
     private ProcessBuilder builder;
-    private PrintWriter writer;
+    private BufferedWriter writer;
     private BufferedReader stdout;
     private BufferedReader stderr;
     private boolean closed = false;
@@ -30,12 +30,11 @@ public abstract class InteractiveCommand {
             stderr = new BufferedReader(
                     new InputStreamReader(process.getErrorStream()));
 
-            writer = new PrintWriter(process.getOutputStream());
+            writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
 
             watch();
             process.waitFor();
             writer.close();
-            writer.flush();
             stdout.close();
             stderr.close();
 
@@ -81,10 +80,17 @@ public abstract class InteractiveCommand {
 
         Thread inputThr = new Thread(() -> {
             try {
-                while(System.in.available() == 0 || !closed) Thread.sleep(250);
-                if(closed) return;
-                while(scnr.hasNextLine()) {
-                    inputReceived(scnr.nextLine());
+                while(!closed) {
+                    while (System.in.available() == 0 && !closed) Thread.sleep(250);
+                    if (closed) return;
+                    while (scnr.hasNextLine()) {
+                        String input = scnr.nextLine();
+                        writer.write(input);
+                        writer.newLine();
+                        writer.flush();
+                        inputReceived(input);
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -109,7 +109,7 @@ public class InteractiveShell {
                             InteractiveCommand cmd = new InteractiveCommand(SHA.getSha1("" + System.currentTimeMillis()), pwdCommand) {
                                 @Override
                                 public void inputReceived(String input) {
-                                    System.out.println("INPUT RECEIVED" + input);
+                                    //System.out.println("INPUT RECEIVED" + input);
                                 }
                             };
                             pwd = cmd.getPwd();
