@@ -109,12 +109,10 @@ public class InteractiveShell {
                             InteractiveCommand cmd = new InteractiveCommand(SHA.getSha1("" + System.currentTimeMillis()), pwdCommand) {
                                 @Override
                                 public void inputReceived(String input) {
-                                    //System.out.println("INPUT RECEIVED" + input);
+                                    //TODO add to config
                                 }
                             };
                             pwd = cmd.getPwd();
-                            //pwd = new InteractiveCommand().execute(pwdCommand);
-                            //RunCommand.interactive(pwdCommand);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
