@@ -46,31 +46,18 @@ public class RunCommand {
 
     }
 
-    public static String interactive(String cmd) throws IOException, InterruptedException {
+    public static int editor(String editor, String filepath) throws IOException, InterruptedException {
 
+
+        Runtime.getRuntime().exec("clear");
         ProcessBuilder builder = new ProcessBuilder();
-        builder.command("/bin/sh", "-c", cmd);
+        builder.command(editor, filepath);
+        builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+        builder.redirectError(ProcessBuilder.Redirect.INHERIT);
+        builder.redirectInput(ProcessBuilder.Redirect.INHERIT);
         Process process = builder.start();
 
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream()));
-
-        String line;
-        String pwd = "";
-        boolean flag = false;
-        while ((line = reader.readLine()) != null) {
-            if(flag) {
-                pwd = line;
-                break;
-            } else {
-                if(line.equals("#!")) flag = true;
-                else System.out.println(line);
-            }
-        }
-
-        process.waitFor();
-
-        return pwd;
+        return process.waitFor();
 
     }
 

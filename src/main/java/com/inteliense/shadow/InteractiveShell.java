@@ -1,5 +1,6 @@
 package com.inteliense.shadow;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -130,7 +131,22 @@ public class InteractiveShell {
     }
 
     private static void edit(String pwd, String[] command) {
-
+        String filepath = fixPath(pwd);
+        if(command.length == 2) {
+            try {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                String inputPath = command[1];
+                if (!inputPath.startsWith("/")) filepath += inputPath;
+                else filepath = inputPath;
+                File file = new File(filepath);
+                if (!file.exists()) file.createNewFile();
+                int exitCode = RunCommand.editor("vi", filepath);
+                Scanner reader = new Scanner(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
     private static void forget(String[] command) {
         System.out.println("Confirm. Are you sure you would like to forget every command executed from this branch?");
@@ -138,9 +154,29 @@ public class InteractiveShell {
     private static void last(String[] command) {
         if(history.size() == 0) return;
         if(command.length == 1) {
-            System.out.println(" -- Last command -- ");
-            System.out.println("       " + history.get(history.size() - 1));
-            System.out.println(" Type remove to remove or leave blank to return to the shell >> ");
+            System.out.println(ANSI_GREEN + "LAST COMMAND" + ANSI_RESET);
+            System.out.println("Type 'remove'/'rm' or 'delete'/'del' to ignore a command.");
+            System.out.println("To show the next previous command, leave blank and press enter.");
+            System.out.println("When finished, type 'exit'.");
+            System.out.println();
+            boolean inLast = true;
+            int curr = 1;
+            while(inLast) {
+                int index = history.size() - curr;
+                System.out.print(ANSI_BLUE + "[" + (index + 1) + "] " + ANSI_GREEN + history.get(index));
+                System.out.print(ANSI_PURPLE + " $ " + ANSI_BLUE + ">> " + ANSI_RESET);
+                String input = scnr.nextLine().trim();
+                if(input.equals("")) {
+                    if(index > 0) curr++;
+                } else if(input.equals("exit")) {
+                    break;
+                } else if(input.equals("rm") || input.equals("remove") || input.equals("del") || input.equals("delete")) {
+                    history.remove(index);
+                    if(history.size() == 0) break;
+                    curr--;
+                }
+            }
+
         } else if(command.length == 2) { //last [#]
 
         } else {
