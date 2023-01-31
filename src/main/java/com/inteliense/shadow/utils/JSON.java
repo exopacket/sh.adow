@@ -1,4 +1,4 @@
-package com.inteliense.shadow;
+package com.inteliense.shadow.utils;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

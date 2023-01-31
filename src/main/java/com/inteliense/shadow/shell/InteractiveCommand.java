@@ -1,4 +1,4 @@
-package com.inteliense.shadow;
+package com.inteliense.shadow.shell;
 
 import java.io.*;
 import java.util.Scanner;

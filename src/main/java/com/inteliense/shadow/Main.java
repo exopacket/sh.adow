@@ -1,5 +1,9 @@
 package com.inteliense.shadow;
 
+import com.inteliense.shadow.models.Config;
+import com.inteliense.shadow.shell.InteractiveShell;
+import com.inteliense.shadow.utils.JSON;
+import com.inteliense.shadow.utils.RunCommand;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -33,7 +37,6 @@ public class Main {
         if(args.length >= 2) {
             if(fileCheck(args[0])) {
                 switch(args[1]) {
-                    // TODO possibly add support for editing, copying, and removing files
                     case "install":
                         superuser();
                         downloadPackageWithDependencies(args);
@@ -115,7 +118,7 @@ public class Main {
         try {
             if(flavor.equals("debian")) {
                 String path = "/var/cache/apt/archives/" + filename;
-                String toPath = getConfigDir() + projectName + "/packages/";
+                String toPath = Config.getConfigDir() + projectName + "/packages/";
                 File dir = new File(toPath);
                 if(!dir.exists()) dir.mkdir();
                 RunCommand.runAndWait("dpkg -i " + path);
@@ -200,7 +203,7 @@ public class Main {
         String projectName = (String) object.get("project_name");
         String content = JSON.getString(object);
         try {
-            File file = new File(getConfigDir() + projectName + "/" + projectName + ".conf");
+            File file = new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf");
             PrintWriter pw = new PrintWriter(file);
             pw.println(content);
             pw.flush();
@@ -214,7 +217,7 @@ public class Main {
     private static JSONObject getConfig(String projectName) {
 
         try {
-            File file = new File(getConfigDir() + projectName + "/" + projectName + ".conf");
+            File file = new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf");
             Scanner scnr = new Scanner(file);
             String content = "";
             while (scnr.hasNextLine()) {
@@ -235,25 +238,9 @@ public class Main {
     }
 
     private static boolean fileCheck(String projectName) {
-        return new File(getConfigDir() + projectName + "/" + projectName + ".conf").exists();
+        return new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf").exists();
     }
-
-    private static String getConfigDir() {
-        try {
-            String home = RunCommand.withOut("echo $HOME")[0];
-            if(!home.trim().equals("")) {
-                return fixPath(home) + ".config/shadow/";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "/root/.config/shadow/";
-    }
-
-    private static String fixPath(String in) {
-        if(!in.endsWith("/")) return in + "/";
-        return in;
-    }
+    
 
     private static void projectNotFound(String projectName, String[] args) {
 
@@ -263,9 +250,9 @@ public class Main {
         String input = scnr.nextLine().replaceAll("\\s", "").toUpperCase();
         if(input.equals("Y") || input.equals("YES")) {
             try {
-                File dir = new File(getConfigDir() + projectName);
+                File dir = new File(Config.getConfigDir() + projectName);
                 if (!dir.exists()) dir.mkdirs();
-                File config = new File(getConfigDir() + projectName + "/" + projectName + ".conf");
+                File config = new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf");
                 if (!config.exists()) {
                     config.createNewFile();
                     PrintWriter pw = new PrintWriter(config);
@@ -296,7 +283,7 @@ public class Main {
 
     private static void listProjects() {
         try {
-            RunCommand.streamOut("ls " + getConfigDir());
+            RunCommand.streamOut("ls " + Config.getConfigDir());
         } catch (Exception e) {
             e.printStackTrace();
         }

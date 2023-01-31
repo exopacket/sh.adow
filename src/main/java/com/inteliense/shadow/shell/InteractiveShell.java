@@ -1,4 +1,7 @@
-package com.inteliense.shadow;
+package com.inteliense.shadow.shell;
+
+import com.inteliense.shadow.utils.RunCommand;
+import com.inteliense.shadow.utils.SHA;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,8 +137,6 @@ public class InteractiveShell {
         String filepath = fixPath(pwd);
         if(command.length == 2) {
             try {
-                System.out.print("\033[H\033[2J");
-                System.out.flush();
                 String inputPath = command[1];
                 if (!inputPath.startsWith("/")) filepath += inputPath;
                 else filepath = inputPath;
@@ -159,9 +160,8 @@ public class InteractiveShell {
             System.out.println("To show the next previous command, leave blank and press enter.");
             System.out.println("When finished, type 'exit'.");
             System.out.println();
-            boolean inLast = true;
             int curr = 1;
-            while(inLast) {
+            while(true) {
                 int index = history.size() - curr;
                 System.out.print(ANSI_BLUE + "[" + (index + 1) + "] " + ANSI_GREEN + history.get(index));
                 System.out.print(ANSI_PURPLE + " $ " + ANSI_BLUE + ">> " + ANSI_RESET);
@@ -176,7 +176,7 @@ public class InteractiveShell {
                     curr--;
                 }
             }
-
+            System.out.println();
         } else if(command.length == 2) { //last [#]
 
         } else {

@@ -1,4 +1,4 @@
-package com.inteliense.shadow;
+package com.inteliense.shadow.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.inteliense.shadow;
+package com.inteliense.shadow.utils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
