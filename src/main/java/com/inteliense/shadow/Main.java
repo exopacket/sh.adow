@@ -155,9 +155,7 @@ public class Main {
     }
 
     private static void configure(boolean editSudoers) {
-
         Config.initConfig(editSudoers);
-
     }
 
     private static void interactiveConfigure() {
