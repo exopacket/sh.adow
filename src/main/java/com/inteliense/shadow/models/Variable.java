@@ -9,9 +9,8 @@ public class Variable extends Event {
     private String value;
 
     public Variable(String name, String value) {
-
         super();
-
+        index = Config.getCurrent().size();
         this.name = name;
         this.value = value;
     }
@@ -20,7 +19,7 @@ public class Variable extends Event {
 
         super();
 
-        this.index = (int) obj.get("index");
+        this.index = Integer.parseInt((String) obj.get("index"));
         this.name = (String) obj.get("name");
         this.value = (String) obj.get("value");
     }
@@ -35,7 +34,7 @@ public class Variable extends Event {
 
     public JSONObject getObject() {
         JSONObject obj = new JSONObject();
-        obj.put("index", this.index);
+        obj.put("index", "" + this.index);
         obj.put("type", "var");
         obj.put("name", this.name);
         obj.put("value", this.value);

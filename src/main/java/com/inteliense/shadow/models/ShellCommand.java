@@ -23,7 +23,7 @@ public class ShellCommand extends Event {
 
         super();
 
-        this.index = Integer.valueOf((String) obj.get("index"));
+        this.index = Integer.parseInt((String) obj.get("index"));
         this.command = (String) obj.get("value");
 
         JSONArray inputArr = (JSONArray) obj.get("input");
@@ -56,7 +56,7 @@ public class ShellCommand extends Event {
         JSONArray inputArr = new JSONArray();
         for(int i=0; i< inputValues.size(); i++) {
             JSONObject input = new JSONObject();
-            input.put("index", i);
+            input.put("index", "" + i);
             input.put("value", inputValues.get(i));
             inputArr.add(input);
         }

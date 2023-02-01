@@ -26,7 +26,7 @@ public class Package extends Event {
 
         super();
 
-        this.index = (int) obj.get("index");
+        this.index = Integer.parseInt((String) obj.get("index"));
         this.name = (String) obj.get("value");
 
         JSONArray filesArr = (JSONArray) obj.get("files");
@@ -48,14 +48,14 @@ public class Package extends Event {
     public JSONObject getObject() {
 
         JSONObject obj = new JSONObject();
-        obj.put("index", this.index);
+        obj.put("index", "" + this.index);
         obj.put("type", "pkg");
         obj.put("value", this.name);
 
         JSONArray filesArr = new JSONArray();
         for(int i=0; i< dependencies.size(); i++) {
             JSONObject file = new JSONObject();
-            file.put("index", i);
+            file.put("index", "" + i);
             file.put("value", dependencies.get(i));
             filesArr.add(file);
         }

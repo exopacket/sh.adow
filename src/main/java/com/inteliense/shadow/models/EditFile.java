@@ -27,7 +27,7 @@ public class EditFile extends Event {
     public EditFile(JSONObject obj) {
 
         super();
-        this.index = (int) obj.get("index");
+        this.index = Integer.parseInt((String) obj.get("index"));
         this.filepath = (String) obj.get("path");
         this.savedName = (String) obj.get("saved_name");
 
@@ -52,7 +52,7 @@ public class EditFile extends Event {
     public JSONObject getObject() {
 
         JSONObject obj = new JSONObject();
-        obj.put("index", this.index);
+        obj.put("index", "" + this.index);
         obj.put("type", "file");
         obj.put("path", this.filepath);
         obj.put("saved_name", this.savedName);
