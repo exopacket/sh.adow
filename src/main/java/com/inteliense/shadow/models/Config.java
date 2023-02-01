@@ -99,6 +99,7 @@ public class Config {
         Config.isOfflineInstallation = isOfflineInstallation;
         setUsername();
         saveConfig();
+        editSudoers();
 
     }
 
