@@ -99,7 +99,7 @@ public class Config {
         Config.isOfflineInstallation = isOfflineInstallation;
         setUsername();
         saveConfig();
-        editSudoers();
+        //editSudoers();
 
     }
 
@@ -108,7 +108,7 @@ public class Config {
         branches.add(defaultBranch);
         setUsername();
         saveConfig();
-        editSudoers();
+        //editSudoers();
     }
 
     private static void setUsername() {
