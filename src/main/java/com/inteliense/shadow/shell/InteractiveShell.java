@@ -1,6 +1,7 @@
 package com.inteliense.shadow.shell;
 
 import com.inteliense.shadow.models.Config;
+import com.inteliense.shadow.models.EditFile;
 import com.inteliense.shadow.models.Event;
 import com.inteliense.shadow.models.ShellCommand;
 import com.inteliense.shadow.utils.RunCommand;
@@ -141,8 +142,14 @@ public class InteractiveShell {
                 else filepath = inputPath;
                 File file = new File(filepath);
                 if (!file.exists()) file.createNewFile();
-                int exitCode = RunCommand.editor("vi", filepath);
+                RunCommand.editor(Config.textEditor, filepath);
                 Scanner reader = new Scanner(file);
+                String content = "";
+                while(reader.hasNextLine()) {
+                    content += reader.nextLine() + "\n";
+                }
+                EditFile editedFile = new EditFile(filepath, content);
+                Config.getCurrent().add(editedFile);
             } catch (Exception e) {
                 e.printStackTrace();
             }

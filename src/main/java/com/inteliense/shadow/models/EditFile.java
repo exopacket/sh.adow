@@ -39,7 +39,11 @@ public class EditFile extends Event {
 
     private void saveFile(String content) throws FileNotFoundException {
         this.savedName = SHA.getSha1("file_" + System.currentTimeMillis());
-        File file = new File("" + savedName);
+        String dirPath = Config.getConfigDir() + Config.projectName + "/branches/" + Config.getCurrent().getId() + "/files/";
+        String filePath = dirPath + this.savedName;
+        File dir = new File(dirPath);
+        if(!dir.exists()) dir.mkdirs();
+        File file = new File(filePath);
         PrintWriter pw = new PrintWriter(file);
         pw.print(content);
         pw.flush();
