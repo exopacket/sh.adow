@@ -7,4 +7,18 @@ To initialize the configuration run<br>
 `java -jar shadow.jar cli configure-defaults`<br>
 
 To run the interactive shell<br>
-`java -jar shadow.jr cli capture`
+`java -jar shadow.jar cli capture`<br>
+
+# Interactive Shell usage
+
+Type these commands into the interactive shell to fine tune how your terminal session is tracked. <i>Some may be non-functional currently</i>
+
+`ignore` begin ignoring commands entered into the terminal<br>
+`continue` stop ignoring and keep track of commands<br>
+`forget` erase every command history in the current branch<br>
+`edit` open a file in your preferred text editor for editing<br>
+`last [n]` iterate through the previous commands<br>
+`export|var` set an environment variable<br>
+`branch` end current branch and start a new one<br>
+`exit` exit the interactive terminal<br>
+`help` list these commands and their information<br>
