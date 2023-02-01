@@ -17,7 +17,7 @@ Type these commands into the interactive shell to fine tune how your terminal se
 `continue` stop ignoring and keep track of commands<br>
 `forget` erase every command history in the current branch<br>
 `edit` open a file in your preferred text editor for editing and store the result<br>
-`install` install a package (downloads and stores with offline flag set)<br>
+`install` install a package (downloads and stores with offline flag set). Assumes that the package name is correct. Must run .jar as root user or have appropriate sudo rights w/o a passwsord.<br>
 `last [n]` iterate through the previous commands<br>
 `export|var` set an environment variable<br>
 `branch` end current branch and start a new one<br>
