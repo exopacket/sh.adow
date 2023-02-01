@@ -117,4 +117,8 @@ public class Branch {
         return this.id;
     }
 
+    public void clearEvents() {
+        this.events.clear();
+    }
+
 }

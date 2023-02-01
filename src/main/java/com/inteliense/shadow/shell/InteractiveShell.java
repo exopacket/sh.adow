@@ -1,9 +1,7 @@
 package com.inteliense.shadow.shell;
 
-import com.inteliense.shadow.models.Config;
-import com.inteliense.shadow.models.EditFile;
+import com.inteliense.shadow.models.*;
 import com.inteliense.shadow.models.Package;
-import com.inteliense.shadow.models.ShellCommand;
 import com.inteliense.shadow.utils.RunCommand;
 import com.inteliense.shadow.utils.SHA;
 
@@ -83,7 +81,7 @@ public class InteractiveShell {
                         setCollecting(false);
                         break;
                     case "forget":
-                        forget(commandArr);
+                        forget();
                         break;
                     case "last":
                         last(commandArr);
@@ -158,8 +156,21 @@ public class InteractiveShell {
         }
     }
 
-    private static void forget(String[] command) {
-        System.out.println("Confirm. Are you sure you would like to forget every command executed from this branch?");
+    private static void forget() {
+        System.out.println("Confirm. Are you sure you would like to forget every event executed from this branch?");
+        System.out.print("Enter yes or no: ");
+        String input = scnr.nextLine().trim().toLowerCase();
+        if(input.equals("yes")) {
+            System.out.println("You have selected to forget every event in this branch. Confirm a second time to continue.");
+            System.out.print("Enter forget to confirm or press enter to cancel: ");
+            input = scnr.nextLine().trim().toLowerCase();
+            if(input.equals("forget")) {
+                Config.getCurrent().clearEvents();
+                System.out.println("All events in the current branch have been deleted.");
+                return;
+            }
+        }
+        System.out.println("You have canceled the forget process and the events remain in storage.");
     }
 
     private static void last(String[] command) {
@@ -219,17 +230,32 @@ public class InteractiveShell {
             System.out.println("You have chosen to cancel switching to a new branch.");
             return;
         }
-        saveCapture(prevBranch);
+        //saveCapture(prevBranch);
         System.out.println("\nThe previous branch has been saved and a new branch has started.\n");
         //branchName = currBranch;
     }
 
     private static void variable(String[] command) {
-        System.out.println("var");
-    }
-
-    private static void saveCapture(String branch) {
-        System.out.println("saveCapture");
+        String[] variable = null;
+        if(command.length == 4) {
+            variable = command;
+        } else if(command.length < 4) {
+            String commandStr = "";
+            for(int i=0; i<command.length; i++) {
+                commandStr += command[i];
+            }
+            commandStr.replace("=", " = ");
+            variable = commandStr.split("\\s+");
+        }
+        if(variable.length == 4) {
+            Variable var = new Variable(variable[1], variable[3]);
+            Config.getCurrent().add(var);
+        } else {
+            System.err.println("Invalid variable usage.");
+            System.err.println("example:");
+            System.err.println("var name = 'value'");
+            System.err.println("export name = 'value'");
+        }
     }
 
     private static void setCollecting(boolean val) {

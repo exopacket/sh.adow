@@ -117,7 +117,40 @@ public class Main {
 
     private static void interactiveConfigure() {
 
+        Scanner scnr = new Scanner(System.in);
 
+        System.out.println("sh.adow | configuration");
+        System.out.println();
+        String flavor;
+        String textEditor;
+        String projectName;
+        String branchName;
+        String isOffline;
+
+        while (true) {
+            System.out.print("Enter your Linux base OS type [fedora|debian]: ");
+            flavor = scnr.nextLine().toLowerCase();
+            if(flavor.equals("debian") || flavor.equals("fedora")) break;
+            else System.err.println("Invalid entry.");
+        }
+
+        System.out.print("Enter the name of your preferred text editor: ");
+        textEditor = scnr.nextLine().toLowerCase();
+
+        while (true) {
+            System.out.print("Would you like to download packages for offline installations? [yes|no]: ");
+            isOffline = scnr.nextLine().toLowerCase();
+            if(isOffline.equals("yes") || isOffline.equals("no")) break;
+            else System.err.println("Invalid entry.");
+        }
+
+        System.out.print("Enter the name of your initial project: ");
+        projectName = scnr.nextLine().toLowerCase();
+
+        System.out.print("Enter the name of your initial branch: ");
+        branchName = scnr.nextLine().toLowerCase();
+
+        Config.initConfig(textEditor, projectName, branchName, flavor, isOffline.equals("yes"));
 
     }
 
