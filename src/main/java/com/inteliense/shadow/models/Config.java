@@ -84,6 +84,13 @@ public class Config {
 
     public static void initConfig(String textEditor, String projectName, String firstBranchName, String flavor, boolean isOfflineInstallation) {
 
+        Config.textEditor = textEditor;
+        Config.projectName = projectName;
+        Branch defaultBranch = new Branch(firstBranchName);
+        branches.add(defaultBranch);
+        Config.flavor = flavor;
+        Config.isOfflineInstallation = isOfflineInstallation;
+
     }
 
     public static void initConfig() {

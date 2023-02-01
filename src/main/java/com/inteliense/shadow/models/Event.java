@@ -15,6 +15,8 @@ public abstract class Event {
 
     public abstract JSONObject getObject();
 
+    public abstract String getHistoryString();
+
     public String getUniqueId() {
         return uniqueId;
     }

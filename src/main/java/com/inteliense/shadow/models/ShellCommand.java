@@ -8,20 +8,22 @@ import java.util.ArrayList;
 public class ShellCommand extends Event {
 
     private String command;
+    private String dir;
     private ArrayList<String> inputValues = new ArrayList<String>();
     private int index = -1;
 
-    public ShellCommand(String command) {
+    public ShellCommand(String command, String dir) {
         super();
         index = Config.getCurrent().size();
         this.command = command;
+        this.dir = dir;
     }
 
     public ShellCommand(JSONObject obj) {
 
         super();
 
-        this.index = (int) obj.get("index");
+        this.index = Integer.valueOf((String) obj.get("index"));
         this.command = (String) obj.get("value");
 
         JSONArray inputArr = (JSONArray) obj.get("input");
@@ -30,6 +32,10 @@ public class ShellCommand extends Event {
             this.inputValues.add((String) input.get("value"));
         }
 
+    }
+
+    public String getHistoryString() {
+        return command;
     }
 
     public String getType() {
@@ -42,9 +48,10 @@ public class ShellCommand extends Event {
     public JSONObject getObject() {
 
         JSONObject obj = new JSONObject();
-        obj.put("index", this.index);
+        obj.put("index", "" + this.index);
         obj.put("type", "shell");
         obj.put("value", command);
+        obj.put("dir", dir);
 
         JSONArray inputArr = new JSONArray();
         for(int i=0; i< inputValues.size(); i++) {

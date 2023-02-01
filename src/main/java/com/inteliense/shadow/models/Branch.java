@@ -18,7 +18,6 @@ public class Branch {
     private String notes;
     private String createdTimestamp;
     private String id;
-
     private ArrayList<Event> events = new ArrayList<Event>();
 
     public Branch(String name, String notes) {
@@ -104,6 +103,10 @@ public class Branch {
 
     public void add(Event command) {
         events.add(command);
+    }
+
+    public ArrayList<Event> history() {
+        return this.events;
     }
 
     public int size() {

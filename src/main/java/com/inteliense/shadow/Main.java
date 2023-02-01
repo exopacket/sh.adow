@@ -18,12 +18,18 @@ public class Main {
     private static ArrayList<String> installed = new ArrayList<String>();
     private static String flavor = "debian";
     private static String projectName = "";
+
     public static void main(String[] args) {
 
         if(args.length >= 1) {
             if(args[0].equals("cli")) {
                 switch(args[1]) {
                     case "capture":
+                        try {
+                            Config.loadConfig();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         startInteractiveShell();
                         break;
                     case "configure":

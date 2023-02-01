@@ -1,5 +1,8 @@
 package com.inteliense.shadow.shell;
 
+import com.inteliense.shadow.models.Config;
+import com.inteliense.shadow.models.Event;
+import com.inteliense.shadow.models.ShellCommand;
 import com.inteliense.shadow.utils.RunCommand;
 import com.inteliense.shadow.utils.SHA;
 
@@ -23,13 +26,8 @@ public class InteractiveShell {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    private static ArrayList<String> history = new ArrayList<String>();
-
-    private static String branchName;
-
     public static void capture() throws IOException {
 
-        branchName = "branch_" + SHA.getSha1("" + System.currentTimeMillis());
         String pwd = RunCommand.getUserHome();
 
         startup();
@@ -107,11 +105,12 @@ public class InteractiveShell {
                     default:
 
                         String pwdCommand = "cd " + fixPath(pwd) + " && " + command;
+                        ShellCommand commandObj = new ShellCommand(command, fixPath(pwd));
                         try {
                             InteractiveCommand cmd = new InteractiveCommand(SHA.getSha1("" + System.currentTimeMillis()), pwdCommand) {
                                 @Override
                                 public void inputReceived(String input) {
-                                    //TODO add to config
+                                    commandObj.addInputValue(input);
                                 }
                             };
                             pwd = cmd.getPwd();
@@ -119,17 +118,17 @@ public class InteractiveShell {
                             e.printStackTrace();
                         }
 
-                        if(isCollecting) history.add(command);
+                        if(isCollecting) Config.getCurrent().add(commandObj);
 
                         break;
 
                 }
 
+                Config.saveConfig();
+
             }
 
         }
-
-        saveCapture(branchName);
 
     }
 
@@ -153,7 +152,7 @@ public class InteractiveShell {
         System.out.println("Confirm. Are you sure you would like to forget every command executed from this branch?");
     }
     private static void last(String[] command) {
-        if(history.size() == 0) return;
+        if(Config.getCurrent().history().size() == 0) return;
         if(command.length == 1) {
             System.out.println(ANSI_GREEN + "LAST COMMAND" + ANSI_RESET);
             System.out.println("Type 'remove'/'rm' or 'delete'/'del' to ignore a command.");
@@ -162,8 +161,8 @@ public class InteractiveShell {
             System.out.println();
             int curr = 1;
             while(true) {
-                int index = history.size() - curr;
-                System.out.print(ANSI_BLUE + "[" + (index + 1) + "] " + ANSI_GREEN + history.get(index));
+                int index = Config.getCurrent().history().size() - curr;
+                System.out.print(ANSI_BLUE + "[" + (index + 1) + "] " + ANSI_GREEN + Config.getCurrent().history().get(index).getHistoryString());
                 System.out.print(ANSI_PURPLE + " $ " + ANSI_BLUE + ">> " + ANSI_RESET);
                 String input = scnr.nextLine().trim();
                 if(input.equals("")) {
@@ -171,9 +170,9 @@ public class InteractiveShell {
                 } else if(input.equals("exit")) {
                     break;
                 } else if(input.equals("rm") || input.equals("remove") || input.equals("del") || input.equals("delete")) {
-                    history.remove(index);
-                    if(history.size() == 0) break;
-                    curr--;
+                    Config.getCurrent().history().remove(index);
+                    if(Config.getCurrent().history().size() == 0) break;
+                    if(curr > 1) curr--;
                 }
             }
             System.out.println();
@@ -199,7 +198,7 @@ public class InteractiveShell {
         }
         saveCapture(prevBranch);
         System.out.println("\nThe previous branch has been saved and a new branch has started.\n");
-        branchName = currBranch;
+        //branchName = currBranch;
     }
     private static void variable(String[] command) {
         System.out.println("var");

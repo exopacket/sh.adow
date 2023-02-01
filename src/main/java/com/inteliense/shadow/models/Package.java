@@ -37,6 +37,10 @@ public class Package extends Event {
 
     }
 
+    public String getHistoryString() {
+        return "install " + name;
+    }
+
     public String getType() {
         return "InstallPackage";
     }

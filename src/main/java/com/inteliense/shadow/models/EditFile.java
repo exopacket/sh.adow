@@ -33,6 +33,10 @@ public class EditFile extends Event {
 
     }
 
+    public String getHistoryString() {
+        return "<edit file> " + this.filepath;
+    }
+
     private void saveFile(String content) throws FileNotFoundException {
         this.savedName = SHA.getSha1("file_" + System.currentTimeMillis());
         File file = new File("" + savedName);

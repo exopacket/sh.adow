@@ -25,6 +25,10 @@ public class Variable extends Event {
         this.value = (String) obj.get("value");
     }
 
+    public String getHistoryString() {
+        return "var " + name + " = " + value;
+    }
+
     public String getType() {
         return "Variable";
     }
