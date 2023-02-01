@@ -14,6 +14,7 @@ public class Package extends Command {
     private String name;
     private int index = -1;
     private ArrayList<String> dependencies = new ArrayList<String>();
+
     public Package(String name) {
         this.name = name;
         this.index = Config.getCurrent().size();

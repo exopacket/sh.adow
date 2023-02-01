@@ -9,8 +9,8 @@ public class TerminalCommand extends Command {
 
     private String command;
     private ArrayList<String> inputValues = new ArrayList<String>();
-
     private int index = -1;
+
     public TerminalCommand(String command) {
         index = Config.getCurrent().size();
         this.command = command;

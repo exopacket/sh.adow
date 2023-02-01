@@ -23,13 +23,11 @@ public class Config {
     }
 
     public static Branch getCurrent() {
-
-        return null;
-
+        return branches.get(currentBranch);
     }
 
     public static ArrayList<String> getInstalled() {
-        return null;
+        return installed;
     }
 
     public static String getConfigDir() {
