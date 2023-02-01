@@ -2,7 +2,6 @@ package com.inteliense.shadow.shell;
 
 import com.inteliense.shadow.models.Config;
 import com.inteliense.shadow.models.EditFile;
-import com.inteliense.shadow.models.Event;
 import com.inteliense.shadow.models.Package;
 import com.inteliense.shadow.models.ShellCommand;
 import com.inteliense.shadow.utils.RunCommand;
@@ -158,9 +157,11 @@ public class InteractiveShell {
             }
         }
     }
+
     private static void forget(String[] command) {
         System.out.println("Confirm. Are you sure you would like to forget every command executed from this branch?");
     }
+
     private static void last(String[] command) {
         if(Config.getCurrent().history().size() == 0) return;
         if(command.length == 1) {
@@ -203,6 +204,7 @@ public class InteractiveShell {
 
         }
     }
+
     private static void branch() {
         System.out.print("\nYou've selected to start a new branch." +
                 "\nEnter a name for the branch you're ending (leave blank to cancel): ");
@@ -221,6 +223,7 @@ public class InteractiveShell {
         System.out.println("\nThe previous branch has been saved and a new branch has started.\n");
         //branchName = currBranch;
     }
+
     private static void variable(String[] command) {
         System.out.println("var");
     }
@@ -276,6 +279,7 @@ public class InteractiveShell {
     private static String getUsername() {
         return System.getProperty("user.name");
     }
+
     private static String getDirFromPath(String path) {
         String[] parts = path.split("/");
         return parts[parts.length - 1];

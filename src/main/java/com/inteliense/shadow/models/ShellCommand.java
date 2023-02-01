@@ -51,6 +51,7 @@ public class ShellCommand extends Event {
         obj.put("index", "" + this.index);
         obj.put("type", "shell");
         obj.put("value", command);
+        obj.put("key", getUniqueId());
         obj.put("dir", dir);
 
         JSONArray inputArr = new JSONArray();

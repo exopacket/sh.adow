@@ -38,6 +38,7 @@ public class Variable extends Event {
         obj.put("type", "var");
         obj.put("name", this.name);
         obj.put("value", this.value);
+        obj.put("key", getUniqueId());
 
         return obj;
     }

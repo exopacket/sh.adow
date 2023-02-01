@@ -57,6 +57,7 @@ public class EditFile extends Event {
 
         JSONObject obj = new JSONObject();
         obj.put("index", "" + this.index);
+        obj.put("key", getUniqueId());
         obj.put("type", "file");
         obj.put("path", this.filepath);
         obj.put("saved_name", this.savedName);

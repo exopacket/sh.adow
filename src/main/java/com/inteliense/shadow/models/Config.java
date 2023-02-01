@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 public class Config {
 
+    public static String username = "";
     public static String textEditor = "vi";
     public static String projectName = "default";
     private static int currentBranch = 0;
@@ -64,6 +65,8 @@ public class Config {
             }
         }
 
+        setUsername();
+
     }
 
     public static void saveConfig() {
@@ -75,6 +78,10 @@ public class Config {
                 String branchId = branches.get(i).getId();
                 saveBranchConfig(getConfigDir() + projectName + "/branches/" + branchId + "/branch.conf",
                         JSON.getString(branches.get(i).getEventsObj()));
+            }
+            if(RunCommand.getUID() == 0) {
+                String sudoUser = RunCommand.withOut("echo $SUDO_USER")[0];
+                RunCommand.runAndWait("chown -R " + sudoUser + ":" + sudoUser + " " + getConfigDir());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -90,13 +97,60 @@ public class Config {
         branches.add(defaultBranch);
         Config.flavor = flavor;
         Config.isOfflineInstallation = isOfflineInstallation;
+        setUsername();
+        saveConfig();
 
     }
 
     public static void initConfig() {
         Branch defaultBranch = new Branch("default");
         branches.add(defaultBranch);
+        setUsername();
         saveConfig();
+        editSudoers();
+    }
+
+    private static void setUsername() {
+        try {
+            if (RunCommand.getUID() == 0) username = RunCommand.withOut("echo $SUDO_USER")[0];
+            else username = RunCommand.withOut("echo $USER")[0];
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    private static void editSudoers() {
+
+        try {
+
+            File sudoers = new File("/etc/sudoers");
+            Scanner reader = new Scanner(sudoers);
+
+            String content = "";
+            while (reader.hasNextLine()) {
+                content += reader.nextLine() + "\n";
+            }
+
+            if (content.contains(username)) {
+                content.replaceAll("/^" + username + "/", "#" + username);
+            }
+
+            if(content.contains("Defaults:" + username)) {
+                content.replaceAll("Defaults:" + username, "#Defaults:" + username);
+            }
+
+            content += "Defaults:" + username + " !requiretty\n";
+            content += username + "\tALL=(ALL:ALL) NOPASSWD: " + RunCommand.getJarPath();
+
+            PrintWriter pw = new PrintWriter(sudoers);
+            pw.println(content);
+            pw.flush();
+            pw.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static JSONObject getGlobalConfigObj() {
@@ -190,7 +244,12 @@ public class Config {
 
     public static String getConfigDir() {
         try {
-            String home = RunCommand.withOut("echo $HOME")[0];
+            String home = "";
+            if(RunCommand.getUID() == 0) {
+                home = RunCommand.withOut("su -c 'echo $HOME' " + username)[0];
+            } else {
+                home = RunCommand.withOut("echo $HOME")[0];
+            }
             if(!home.trim().equals("")) {
                 return fixPath(home) + ".config/shadow/";
             }
