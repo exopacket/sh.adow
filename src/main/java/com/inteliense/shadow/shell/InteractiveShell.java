@@ -229,6 +229,36 @@ public class InteractiveShell {
 
     private static void branch() {
 
+        System.out.println(ANSI_GREEN + "CREATE NEW BRANCH" + ANSI_RESET);
+
+        System.out.print("Would you like to continue creating a new branch? [yes|no]: ");
+        String input = scnr.nextLine().trim().toLowerCase();
+        if(input.equals("no")) return;
+
+        System.out.println("\nYour current branch is " + ANSI_CYAN + Config.getCurrent().getName() + ANSI_RESET + " (" + Config.getCurrent().getId() + ")");
+        System.out.println(ANSI_RESET + "" + Config.getCurrent().history().size() + " events");
+        System.out.println(ANSI_YELLOW + "Notes: " + ANSI_RESET + Config.getCurrent().getNotes());
+        System.out.println();
+
+        System.out.print("Enter more notes or leave blank to continue: ");
+        String notes = scnr.nextLine().trim();
+        if(!notes.equals("")) Config.getCurrent().appendNotes(notes);
+
+        String branchName = "";
+        while(true) {
+            System.out.print("Enter the new branch name: ");
+            branchName = scnr.nextLine().trim();
+            if(!branchName.equals("")) break;
+        }
+
+        String newNotes = "";
+        System.out.print("Enter notes for the new branch: ");
+        newNotes = scnr.nextLine();
+
+        Config.createBranch(branchName, newNotes);
+
+        System.out.println(ANSI_GREEN + "\nYou're now on the new branch '" + Config.getCurrent().getName() + "' (" + Config.getCurrent().getId() + ")" + ANSI_RESET + "\n");
+
     }
 
     private static void variable(String[] command) {

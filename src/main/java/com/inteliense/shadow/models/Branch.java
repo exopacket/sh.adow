@@ -15,7 +15,7 @@ import static com.inteliense.shadow.models.Config.*;
 public class Branch {
     
     private String name;
-    private String notes;
+    private String notes = "";
     private String createdTimestamp;
     private String id;
     private ArrayList<Event> events = new ArrayList<Event>();
@@ -97,6 +97,17 @@ public class Branch {
         return object;
     }
 
+    public void appendNotes(String val) {
+        notes += "\n" + val;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public String getName() {
+        return name;
+    }
     public void addNotes(String notes) {
         this.notes = notes;
     }

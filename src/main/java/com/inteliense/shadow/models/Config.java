@@ -89,6 +89,15 @@ public class Config {
 
     }
 
+    public static void createBranch(String branchName, String notes) {
+
+        branchName = branchName.replaceAll("\\s+", "_").toLowerCase();
+        Branch branch = new Branch(branchName, notes);
+        currentBranch = branches.size();
+        branches.add(branch);
+
+    }
+
     public static void initConfig(String textEditor, String projectName, String firstBranchName, String flavor, boolean isOfflineInstallation) {
 
         Config.textEditor = textEditor;

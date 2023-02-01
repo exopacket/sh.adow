@@ -14,7 +14,7 @@ To run the interactive shell<br>
 - [ ] create interactive interface for listing 'last' commands by ranges
 - [ ] check if package is already installed, available, and print more information about installation
 - [ ] write logic for variables
-- [ ] rewrite prompts for the 'branch' command
+- [X] rewrite prompts for the 'branch' command
 - [ ] write logic for showInfo() function
 - [ ] write help command output
 - [ ] add commands to skip in config (will not skip if output is redirected)
