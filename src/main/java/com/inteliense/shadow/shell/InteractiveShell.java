@@ -50,6 +50,7 @@ public class InteractiveShell {
                 noStrings = macroize(input, "\34", strings);
                 commands = matches(noStrings, "/[^\\\\];/");
             } catch (Exception e) {
+                System.err.println("Command syntax error.");
                 continue;
             }
             ArrayList<String[]> list = new ArrayList<>();
@@ -151,6 +152,7 @@ public class InteractiveShell {
                 File file = new File(filepath);
                 if (!file.exists()) file.createNewFile();
                 RunCommand.editor(Config.textEditor, filepath);
+                if(!isCollecting) return;
                 Scanner reader = new Scanner(file);
                 String content = "";
                 while(reader.hasNextLine()) {
@@ -217,30 +219,17 @@ public class InteractiveShell {
         for(int i=1; i<packages.length; i++) {
 
             String packageName = packages[i];
-            Package pkg = new Package(packageName);
-            Config.getCurrent().add(pkg);
+            if(isCollecting) {
+                Package pkg = new Package(packageName);
+                Config.getCurrent().add(pkg);
+            }
             System.out.println("Installed '" + packageName + "'");
 
         }
     }
 
     private static void branch() {
-        System.out.print("\nYou've selected to start a new branch." +
-                "\nEnter a name for the branch you're ending (leave blank to cancel): ");
-        String prevBranch = scnr.nextLine().trim().toLowerCase().replaceAll("\\s+", "_");
-        if(prevBranch.equals("")) {
-            System.out.println("You have chosen to cancel switching to a new branch.");
-            return;
-        }
-        System.out.print("Enter a name for the branch you're starting (leave blank to cancel): ");
-        String currBranch = scnr.nextLine().trim().toLowerCase().replaceAll("\\s+", "_");
-        if(currBranch.equals("")) {
-            System.out.println("You have chosen to cancel switching to a new branch.");
-            return;
-        }
-        //saveCapture(prevBranch);
-        System.out.println("\nThe previous branch has been saved and a new branch has started.\n");
-        //branchName = currBranch;
+
     }
 
     private static void variable(String[] command) {
@@ -256,8 +245,10 @@ public class InteractiveShell {
             variable = commandStr.split("\\s+");
         }
         if(variable.length == 4) {
-            Variable var = new Variable(variable[1], variable[3]);
-            Config.getCurrent().add(var);
+            if(isCollecting) {
+                Variable var = new Variable(variable[1], variable[3]);
+                Config.getCurrent().add(var);
+            }
         } else {
             System.err.println("Invalid variable usage.");
             System.err.println("example:");
@@ -303,7 +294,7 @@ public class InteractiveShell {
     }
 
     private static void startup() {
-        System.out.println("\nYou are using the sh.adow interactive shell.\n\n");
+        System.out.println("\n" + ANSI_PURPLE + "You are using the " + ANSI_RED + "sh.adow" + ANSI_PURPLE + " interactive shell.\n" + ANSI_RESET);
     }
 
     private static void printHelp() {
