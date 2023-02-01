@@ -31,13 +31,8 @@ public class Main {
                         interactiveConfigure();
                         break;
                     case "configure-defaults":
-                        //superuser();
-                        try {
-                            Config.loadConfig();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        //configure();
+                        superuser();
+                        configure();
                         break;
 
                 }
