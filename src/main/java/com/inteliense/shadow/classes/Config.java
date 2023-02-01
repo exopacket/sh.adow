@@ -130,6 +130,10 @@ public class Config {
         if(editSudoers) editSudoers();
     }
 
+    public static void setProjectName(String name) {
+        projectName = name.replaceAll("\\s+", "_").toLowerCase();
+        saveConfig();
+    }
     private static void setUsername() {
         try {
             if (RunCommand.getUID() == 0) username = RunCommand.withOut("echo $SUDO_USER")[0];

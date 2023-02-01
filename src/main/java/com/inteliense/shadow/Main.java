@@ -7,6 +7,8 @@ import com.inteliense.shadow.shell.InteractiveShell;
 import com.inteliense.shadow.utils.RunCommand;
 import com.inteliense.shadow.utils.SHA;
 
+import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Main {
@@ -118,13 +120,31 @@ public class Main {
     private static void list(String[] args) {
         if(args[2].equals("projects")) {
             System.out.println(ANSI_GREEN + "ALL LOCAL PROJECTS" + ANSI_RESET);
+            System.out.println();
+            String currentProject = Config.projectName;
+            System.out.println(ANSI_CYAN + "[*] " + currentProject + ANSI_RESET);
+            try {
+                String[] projects = RunCommand.withOut("ls " + Config.getConfigDir());
+                for(int i=0; i<projects.length; i++) {
+                    if(projects[i].equals("global.conf") || projects[i].equals(currentProject)) continue;
+                    System.out.println(ANSI_PURPLE + "[-] " + projects[i] + ANSI_RESET);
+                }
+            } catch (Exception e) {
+                System.err.println("Error retrieving projects...");
+            }
         } else if(args[2].equals("branches")) {
             System.out.println(ANSI_GREEN + "ALL BRANCHES IN PROJECT '" + Config.projectName.toUpperCase() + "'" + ANSI_RESET);
             System.out.println();
+            String currentBranch = Config.getCurrent().getId();
             for(int i=0; i<Config.branches.size(); i++) {
                 Branch branch = Config.branches.get(i);
-                System.out.println(ANSI_PURPLE + "[" + (i + 1) + "]\t" + ANSI_CYAN + branch.getName() + " (" + branch.getId() + ")");
-                System.out.println(ANSI_YELLOW + "\tNotes: " + branch.getNotes() + ANSI_RESET);
+                if(branch.getId().equals(currentBranch)) {
+                    System.out.println(ANSI_CYAN + "[*]\t" + branch.getName() + " (" + branch.getId() + ")");
+                    System.out.println(ANSI_YELLOW + "\tNotes: " + branch.getNotes() + ANSI_RESET);
+                } else {
+                    System.out.println(ANSI_PURPLE + "[-]\t" + branch.getName() + " (" + branch.getId() + ")");
+                    System.out.println(ANSI_YELLOW + "\tNotes: " + branch.getNotes() + ANSI_RESET);
+                }
             }
         }
     }
@@ -143,10 +163,35 @@ public class Main {
     private static void project(String[] args) {
         if(args.length == 3) {
             String projectName = args[2];
-            //if exist, change to that project
-            //else automatically create it
+            boolean found = false;
+            try {
+                String[] projects = RunCommand.withOut("ls " + Config.getConfigDir());
+                for(int i=0; i<projects.length; i++) {
+                    if(projects[i].equals("global.conf")) continue;
+                    if(projects[i].equals(projectName)) {
+                        found = true;
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error retrieving projects...");
+            }
+            Config.setProjectName(projectName);
+            if(found) {
+                System.out.println(ANSI_GREEN + "Switched to the project '" + projectName + "'" + ANSI_RESET);
+            } else {
+                System.out.println(ANSI_GREEN + "Created and switched to the project '" + projectName + "'" + ANSI_RESET);
+            }
         } else {
-            //prompt to create a new project
+            Scanner scnr = new Scanner(System.in);
+            System.out.println("Current project: " + Config.projectName + "\n");
+            System.out.print("Would you like to create a new project? [yes|no]: ");
+            String answer = scnr.nextLine().trim().toLowerCase();
+            if(answer.equals("no")) return;
+            System.out.print("Enter a name for the new project: ");
+            String projectName = scnr.nextLine().trim();
+            Config.setProjectName(projectName);
+            System.out.println(ANSI_GREEN + "Created and switched to the project '" + projectName + "'" + ANSI_RESET);
         }
     }
 
