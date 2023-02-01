@@ -16,12 +16,15 @@ public class Package extends Event {
     private ArrayList<String> dependencies = new ArrayList<String>();
 
     public Package(String name) {
+        super();
         this.name = name;
         this.index = Config.getCurrent().size();
         downloadWithDependencies(name);
     }
 
     public Package(JSONObject obj) {
+
+        super();
 
         this.index = (int) obj.get("index");
         this.name = (String) obj.get("value");

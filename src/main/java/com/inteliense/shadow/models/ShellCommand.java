@@ -12,11 +12,14 @@ public class ShellCommand extends Event {
     private int index = -1;
 
     public ShellCommand(String command) {
+        super();
         index = Config.getCurrent().size();
         this.command = command;
     }
 
     public ShellCommand(JSONObject obj) {
+
+        super();
 
         this.index = (int) obj.get("index");
         this.command = (String) obj.get("value");

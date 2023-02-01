@@ -9,11 +9,17 @@ public class Variable extends Event {
     private String value;
 
     public Variable(String name, String value) {
+
+        super();
+
         this.name = name;
         this.value = value;
     }
 
     public Variable(JSONObject obj) {
+
+        super();
+
         this.index = (int) obj.get("index");
         this.name = (String) obj.get("name");
         this.value = (String) obj.get("value");

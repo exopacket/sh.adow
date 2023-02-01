@@ -14,6 +14,7 @@ public class EditFile extends Event {
     private int index = -1;
 
     public EditFile(String filepath, String content) {
+        super();
         this.filepath = filepath;
         this.index = Config.getCurrent().size();
         try {
@@ -25,6 +26,7 @@ public class EditFile extends Event {
 
     public EditFile(JSONObject obj) {
 
+        super();
         this.index = (int) obj.get("index");
         this.filepath = (String) obj.get("path");
         this.savedName = (String) obj.get("saved_name");
