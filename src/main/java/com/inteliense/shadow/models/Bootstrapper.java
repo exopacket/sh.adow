@@ -1,4 +1,4 @@
-package com.inteliense.shadow;
+package com.inteliense.shadow.models;
 
 public class Bootstrapper {
 
