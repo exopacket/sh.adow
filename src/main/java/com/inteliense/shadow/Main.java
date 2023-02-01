@@ -1,36 +1,62 @@
 package com.inteliense.shadow;
 
+import com.inteliense.shadow.models.Branch;
 import com.inteliense.shadow.models.Config;
+import com.inteliense.shadow.models.Package;
+import com.inteliense.shadow.models.ShellCommand;
+import com.inteliense.shadow.shell.InteractiveCommand;
 import com.inteliense.shadow.shell.InteractiveShell;
 import com.inteliense.shadow.utils.JSON;
 import com.inteliense.shadow.utils.RunCommand;
+import com.inteliense.shadow.utils.SHA;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
-    private static ArrayList<String> installed = new ArrayList<String>();
-    private static String flavor = "debian";
-    private static String projectName = "";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
 
-        if(args.length >= 1) {
+        if(args.length > 1) {
+
             if(args[0].equals("cli")) {
+
                 switch(args[1]) {
                     case "capture":
-                        try {
-                            Config.loadConfig();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        loadConfig();
                         startInteractiveShell();
+                        break;
+                    case "list":
+                        if(args.length < 3) {
+                            printHelp();
+                            System.exit(0);
+                        }
+                        loadConfig();
+                        list(args);
+                        break;
+                    case "project":
+                        loadConfig();
+                        project(args);
+                        break;
+                    case "bootstrapper":
+                        loadConfig();
+                        bootstrapper();
                         break;
                     case "configure":
                         superuser();
@@ -38,80 +64,109 @@ public class Main {
                         break;
                     case "configure-defaults":
                         superuser();
-                        configure();
+                        if(args.length == 3) {
+                            configure(args[2].equals("--with-sudo"));
+                        } else configure(false);
                         break;
-
-                }
-                System.exit(0);
-            }
-        }
-
-        if(args.length >= 2) {
-            if(fileCheck(args[0])) {
-                switch(args[1]) {
                     case "install":
-                        superuser();
-                        downloadPackageWithDependencies(args);
+                        if(args.length < 3) {
+                            printHelp();
+                            System.exit(0);
+                        }
+                        loadConfig();
+                        install(args);
                         break;
                     case "exec":
-                        executeCommand(args);
+                        if(args.length < 3) {
+                            printHelp();
+                            System.exit(0);
+                        }
+                        loadConfig();
+                        exec(args);
                         break;
                     default:
                         printHelp();
                         break;
                 }
-            } else projectNotFound(args[0], args);
-        } else printHelp();
 
-    }
+                System.exit(0);
 
-    private static void downloadPackageWithDependencies(String[] args) {
-
-        JSONObject config = getConfig(args[0]);
-        projectName = args[0];
-
-        for(int i=2; i<args.length; i++) {
-            String packageName = args[i];
-            if(checkInstalled(packageName)) {
-                if (!installed.contains(packageName)) installed.add(packageName);
-            } else {
-                ArrayList<String> allDependencies = new ArrayList<String>();
-                allDependencies = parseDependencies(listDependencies(packageName), allDependencies);
-                allDependencies.add(packageName);
-                for(int x=0; x<allDependencies.size(); x++) {
-                    String dependency = allDependencies.get(x);
-                    String[] filenames = downloadPackage(dependency);
-                    boolean toAdd = true;
-                    if(filenames.length == 1)
-                        if(filenames[0].trim().equals("")) continue;
-                    for(int k=0; k<filenames.length; k++) {
-                        JSONArray configArr = (JSONArray) config.get("entries");
-                        JSONArray installedArr = (JSONArray) config.get("installed");
-                        JSONObject commandObj = new JSONObject();
-                        commandObj.put("index", configArr.size());
-                        commandObj.put("type", "pkg");
-                        commandObj.put("value", filenames[k]);
-                        configArr.add(commandObj);
-                        if(toAdd) {
-                            toAdd = false;
-                            if(!installed.contains(dependency)) {
-                                installedArr.add(dependency);
-                                installed.add(dependency);
-                            }
-                        }
-                        copyPackage(filenames[k]);
-                        saveConfig(config);
-                    }
-                }
             }
 
         }
 
     }
 
-    private static void configure() {
+    private static void exec(String[] args) {
 
-        Config.initConfig();
+        String command = "";
+        for(int i=2; i<args.length; i++) {
+            command += command + " ";
+        }
+
+        String pwd = RunCommand.getUserHome();
+
+        String pwdCommand = "cd " + fixPath(pwd) + " && " + command;
+        ShellCommand commandObj = new ShellCommand(command, fixPath(pwd));
+        try {
+
+            InteractiveCommand cmd = new InteractiveCommand(SHA.getSha1("" + System.currentTimeMillis()), pwdCommand) {
+                @Override
+                public void inputReceived(String input) {
+                    commandObj.addInputValue(input);
+                }
+            };
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Config.getCurrent().add(commandObj);
+
+    }
+
+    private static void list(String[] args) {
+        if(args[2].equals("projects")) {
+            System.out.println(ANSI_GREEN + "ALL LOCAL PROJECTS" + ANSI_RESET);
+        } else if(args[2].equals("branches")) {
+            System.out.println(ANSI_GREEN + "ALL BRANCHES IN PROJECT '" + Config.projectName.toUpperCase() + "'" + ANSI_RESET);
+            System.out.println();
+            for(int i=0; i<Config.branches.size(); i++) {
+                Branch branch = Config.branches.get(i);
+                System.out.println(ANSI_PURPLE + "[" + (i + 1) + "]\t" + ANSI_CYAN + branch.getName() + " (" + branch.getId() + ")");
+                System.out.println(ANSI_YELLOW + "\tNotes: " + branch.getNotes() + ANSI_RESET);
+            }
+        }
+    }
+
+    private static void bootstrapper() {
+        Bootstrapper.configure();
+    }
+
+    private static void install(String[] args) {
+        for(int i=2; i<args.length; i++) {
+            Package pkg = new Package(args[i]);
+            Config.getCurrent().add(pkg);
+        }
+    }
+
+    private static void project(String[] args) {
+        if(args.length == 3) {
+            String projectName = args[2];
+            //if exist, change to that project
+            //else automatically create it
+        } else {
+            //prompt to create a new project
+        }
+    }
+
+    private static void loadConfig() {
+        if(!Config.loadConfig()) System.exit(3);
+    }
+
+    private static void configure(boolean editSudoers) {
+
+        Config.initConfig(editSudoers);
 
     }
 
@@ -150,179 +205,10 @@ public class Main {
         System.out.print("Enter the name of your initial branch: ");
         branchName = scnr.nextLine().toLowerCase();
 
-        Config.initConfig(textEditor, projectName, branchName, flavor, isOffline.equals("yes"));
+        System.out.print("Update sudoers file for sudo support? [yes/no]: ");
+        String val = scnr.nextLine().toLowerCase().trim();
 
-    }
-
-    private static String[] downloadPackage(String packageName) {
-
-        try {
-            if(flavor.equals("debian")) {
-                RunCommand.runAndWait("rm /var/cache/apt/archives/*.deb");
-                RunCommand.runAndWait("apt install --download-only " + packageName);
-                //RunCommand.runAndWait("og-apt install --download-only " + packageName);
-                return RunCommand.withOut("ls /var/cache/apt/archives | grep .deb");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-
-    }
-
-    private static void copyPackage(String filename) {
-        try {
-            if(flavor.equals("debian")) {
-                String path = "/var/cache/apt/archives/" + filename;
-                String toPath = Config.getConfigDir() + projectName + "/packages/";
-                File dir = new File(toPath);
-                if(!dir.exists()) dir.mkdir();
-                RunCommand.runAndWait("dpkg -i " + path);
-                RunCommand.runAndWait("mv " + path + " " + toPath + filename);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static String[] listDependencies(String packageName) {
-        try {
-            if(flavor.equals("debian"))
-                return RunCommand.withOut("apt-cache depends " + packageName);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return null;
-    }
-
-    private static boolean checkInstalled(String packageName) {
-
-        try {
-
-            if (flavor.equals("debian")) {
-                return RunCommand.withOut("dpkg -s " + packageName).length > 2;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        return false;
-
-    }
-
-    private static ArrayList<String> parseDependencies(String[] cmdOutput, ArrayList<String> dependencies) {
-
-        for(int i=1; i<cmdOutput.length; i++) {
-            String line = cmdOutput[i];
-            if(line.contains("Depends:")) {
-                String stripped = line.replaceAll("(Depends\\:)", "").replaceAll("[\\s\\|\\<\\>]", "");
-                if(!checkInstalled(stripped)) {
-                    dependencies.add(stripped);
-                    dependencies = parseDependencies(listDependencies(stripped), dependencies);
-                }
-            }
-        }
-
-        return dependencies;
-
-    }
-
-    private static void executeCommand(String[] args) {
-
-        JSONObject config = getConfig(args[0]);
-        String fullCommand = "";
-        for(int i=2; i<args.length; i++) {
-            String arg = args[i];
-            if(!arg.contains("\\ ") && arg.contains(" "))
-                arg = "\"" + arg + "\"";
-            fullCommand += ((i > 2) ? " " : "") + arg;
-        }
-        try {
-            RunCommand.streamOut(fullCommand);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        JSONArray configArr = (JSONArray) config.get("entries");
-        JSONObject commandObj = new JSONObject();
-        commandObj.put("index", configArr.size());
-        commandObj.put("type", "shell");
-        commandObj.put("value", fullCommand);
-        configArr.add(commandObj);
-        saveConfig(config);
-
-    }
-
-    private static void saveConfig(JSONObject object) {
-        String projectName = (String) object.get("project_name");
-        String content = JSON.getString(object);
-        try {
-            File file = new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf");
-            PrintWriter pw = new PrintWriter(file);
-            pw.println(content);
-            pw.flush();
-            pw.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    private static JSONObject getConfig(String projectName) {
-
-        try {
-            File file = new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf");
-            Scanner scnr = new Scanner(file);
-            String content = "";
-            while (scnr.hasNextLine()) {
-                content += scnr.nextLine();
-            }
-            JSONObject obj = JSON.getObject(content);
-            JSONArray installedArr = (JSONArray) obj.get("installed");
-            for(int i=0; i<installedArr.size(); i++) {
-                installed.add((String) installedArr.get(i));
-            }
-            return obj;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
-            return null;
-        }
-
-    }
-
-    private static boolean fileCheck(String projectName) {
-        return new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf").exists();
-    }
-    
-
-    private static void projectNotFound(String projectName, String[] args) {
-
-        Scanner scnr = new Scanner(System.in);
-        System.out.println("The sh.adow project '" + projectName + "' was not found.");
-        System.out.print("Would you like to create it? [Y/N]: ");
-        String input = scnr.nextLine().replaceAll("\\s", "").toUpperCase();
-        if(input.equals("Y") || input.equals("YES")) {
-            try {
-                File dir = new File(Config.getConfigDir() + projectName);
-                if (!dir.exists()) dir.mkdirs();
-                File config = new File(Config.getConfigDir() + projectName + "/" + projectName + ".conf");
-                if (!config.exists()) {
-                    config.createNewFile();
-                    PrintWriter pw = new PrintWriter(config);
-                    pw.println("{\"project_name\": \"" + projectName + "\", \"installed\": [], \"entries\": []}");
-                    pw.flush();
-                    pw.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-            main(args);
-        } else System.exit(0);
+        Config.initConfig(textEditor, projectName, branchName, flavor, isOffline.equals("yes"), val.equals("yes"));
 
     }
 
@@ -331,19 +217,6 @@ public class Main {
         System.err.println("Invalid usage");
         System.exit(1);
 
-    }
-
-    private static void init() {
-        superuser();
-
-    }
-
-    private static void listProjects() {
-        try {
-            RunCommand.streamOut("ls " + Config.getConfigDir());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private static void superuser() {
@@ -357,6 +230,11 @@ public class Main {
 
     private static void startInteractiveShell() {
         InteractiveShell.capture();
+    }
+
+    private static String fixPath(String in) {
+        if(!in.endsWith("/")) return in + "/";
+        return in;
     }
 
 }

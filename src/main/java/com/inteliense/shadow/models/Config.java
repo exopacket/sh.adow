@@ -22,50 +22,60 @@ public class Config {
     public static ArrayList<String> installed = new ArrayList<String>();
     public static boolean isOfflineInstallation = true;
 
-    public static void loadConfig() throws IOException {
+    public static boolean loadConfig() {
 
-        String globalConfigPath = getConfigDir() + "global.conf";
-        File file = new File(globalConfigPath);
-        if(file.exists()) {
-            Scanner reader = new Scanner(file);
-            String content = "";
-            while(reader.hasNextLine()) {
-                content += reader.nextLine();
+        try {
+
+            String globalConfigPath = getConfigDir() + "global.conf";
+            File file = new File(globalConfigPath);
+            if (file.exists()) {
+                Scanner reader = new Scanner(file);
+                String content = "";
+                while (reader.hasNextLine()) {
+                    content += reader.nextLine();
+                }
+                JSONObject object = JSON.getObject(content);
+                textEditor = (String) object.get("text_editor");
+                projectName = (String) object.get("project_name");
+                flavor = (String) object.get("os_type");
+                isOfflineInstallation = (boolean) object.get("offline_install");
+
+                JSONArray installedArr = (JSONArray) object.get("installed_packages");
+                for (int i = 0; i < installedArr.size(); i++) {
+                    installed.add((String) installedArr.get(i));
+                }
+
             }
-            JSONObject object = JSON.getObject(content);
-            textEditor = (String) object.get("text_editor");
-            projectName = (String) object.get("project_name");
-            flavor = (String) object.get("os_type");
-            isOfflineInstallation = (boolean) object.get("offline_install");
 
-            JSONArray installedArr = (JSONArray) object.get("installed_packages");
-            for(int i=0; i< installedArr.size(); i++) {
-                installed.add((String) installedArr.get(i));
+            String projectConfigPath = getConfigDir() + projectName + "/" + "project.conf";
+
+            File projectConfig = new File(projectConfigPath);
+            if (file.exists()) {
+                Scanner reader = new Scanner(projectConfig);
+                String content = "";
+                while (reader.hasNextLine()) {
+                    content += reader.nextLine();
+                }
+                JSONObject project = JSON.getObject(content);
+                String currentBranchId = (String) project.get("current_branch");
+                JSONArray branchesArr = (JSONArray) project.get("branches");
+                for (int i = 0; i < branchesArr.size(); i++) {
+                    JSONObject branch = (JSONObject) branchesArr.get(i);
+                    Branch branchData = new Branch(branch);
+                    if (branchData.getId().equals(currentBranchId)) currentBranch = i;
+                    branches.add(branchData);
+                }
             }
 
+            setUsername();
+
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        String projectConfigPath = getConfigDir() + projectName + "/" + "project.conf";
-
-        File projectConfig = new File(projectConfigPath);
-        if(file.exists()) {
-            Scanner reader = new Scanner(projectConfig);
-            String content = "";
-            while(reader.hasNextLine()) {
-                content += reader.nextLine();
-            }
-            JSONObject project = JSON.getObject(content);
-            String currentBranchId = (String) project.get("current_branch");
-            JSONArray branchesArr = (JSONArray) project.get("branches");
-            for(int i=0; i<branchesArr.size(); i++) {
-                JSONObject branch = (JSONObject) branchesArr.get(i);
-                Branch branchData = new Branch(branch);
-                if(branchData.getId().equals(currentBranchId)) currentBranch = i;
-                branches.add(branchData);
-            }
-        }
-
-        setUsername();
+        return false;
 
     }
 
@@ -98,7 +108,7 @@ public class Config {
 
     }
 
-    public static void initConfig(String textEditor, String projectName, String firstBranchName, String flavor, boolean isOfflineInstallation) {
+    public static void initConfig(String textEditor, String projectName, String firstBranchName, String flavor, boolean isOfflineInstallation, boolean editSudoers) {
 
         Config.textEditor = textEditor;
         Config.projectName = projectName;
@@ -108,16 +118,16 @@ public class Config {
         Config.isOfflineInstallation = isOfflineInstallation;
         setUsername();
         saveConfig();
-        //editSudoers();
+        if(editSudoers) editSudoers();
 
     }
 
-    public static void initConfig() {
+    public static void initConfig(boolean editSudoers) {
         Branch defaultBranch = new Branch("default");
         branches.add(defaultBranch);
         setUsername();
         saveConfig();
-        //editSudoers();
+        if(editSudoers) editSudoers();
     }
 
     private static void setUsername() {

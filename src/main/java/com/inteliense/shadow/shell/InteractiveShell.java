@@ -222,7 +222,6 @@ public class InteractiveShell {
                 Package pkg = new Package(packageName);
                 Config.getCurrent().add(pkg);
             }
-            System.out.println("Installed '" + packageName + "'");
 
         }
     }
