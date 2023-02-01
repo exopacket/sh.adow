@@ -38,7 +38,7 @@ public class EditFile extends Event {
     }
 
     private void saveFile(String content) throws FileNotFoundException {
-        this.savedName = SHA.getSha1("file_" + System.currentTimeMillis());
+        this.savedName = SHA.getSha1("file_" + filepath);
         String dirPath = Config.getConfigDir() + Config.projectName + "/branches/" + Config.getCurrent().getId() + "/files/";
         String filePath = dirPath + this.savedName;
         File dir = new File(dirPath);
