@@ -356,11 +356,7 @@ public class Main {
     }
 
     private static void startInteractiveShell() {
-        try {
-            InteractiveShell.capture();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        InteractiveShell.capture();
     }
 
 }

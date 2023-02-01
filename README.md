@@ -9,6 +9,20 @@ To initialize the configuration run<br>
 To run the interactive shell<br>
 `java -jar shadow.jar cli capture`<br>
 
+# To-do
+
+- [ ] create interactive interface for listing 'last' commands by ranges
+- [ ] check if package is already installed, available, and print more information about installation
+- [ ] write logic for variables
+- [ ] rewrite prompts for the 'branch' command
+- [ ] write logic for showInfo() function
+- [ ] write help command output
+- [ ] commands to skip in config
+- [ ] branch merge feature
+- [ ] generate shell script for project
+- [ ] generate archive for offline projects
+- [ ] write shell code wrappers for the java application
+
 # Interactive Shell usage
 
 Type these commands into the interactive shell to fine tune how your terminal session is tracked. <i>Some may be non-functional currently</i>

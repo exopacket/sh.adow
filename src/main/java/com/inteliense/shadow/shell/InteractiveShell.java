@@ -25,7 +25,7 @@ public class InteractiveShell {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public static void capture() throws IOException {
+    public static void capture() {
 
         String pwd = RunCommand.getUserHome();
 
@@ -42,9 +42,16 @@ public class InteractiveShell {
             }
 
             //parse syntax... more to do in the future
-            String[] strings = matches(input, "/(\"|'|`)(.*)(\\1)/");
-            String noStrings = macroize(input, "\34", strings);
-            String[] commands = matches(noStrings, "/[^\\\\];/");
+            String[] strings;
+            String noStrings;
+            String[] commands;
+            try {
+                strings = matches(input, "/(\"|'|`)(.*)(\\1)/");
+                noStrings = macroize(input, "\34", strings);
+                commands = matches(noStrings, "/[^\\\\];/");
+            } catch (Exception e) {
+                continue;
+            }
             ArrayList<String[]> list = new ArrayList<>();
 
             for(int i=0; i< commands.length; i++) {
@@ -114,7 +121,8 @@ public class InteractiveShell {
                                     commandObj.addInputValue(input);
                                 }
                             };
-                            pwd = cmd.getPwd();
+                            String pwdOnSuccess = cmd.getPwd();
+                            if(pwdOnSuccess != null) pwd = pwdOnSuccess;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -157,16 +165,16 @@ public class InteractiveShell {
     }
 
     private static void forget() {
-        System.out.println("Confirm. Are you sure you would like to forget every event executed from this branch?");
+        System.out.println("Confirm. Are you sure you would like to forget every event executed in this branch?");
         System.out.print("Enter yes or no: ");
         String input = scnr.nextLine().trim().toLowerCase();
         if(input.equals("yes")) {
-            System.out.println("You have selected to forget every event in this branch. Confirm a second time to continue.");
-            System.out.print("Enter forget to confirm or press enter to cancel: ");
+            System.out.println("\nYou have selected to forget every event in this branch. Confirm a second time to continue.");
+            System.out.print("Type forget to confirm or press enter to cancel: ");
             input = scnr.nextLine().trim().toLowerCase();
             if(input.equals("forget")) {
                 Config.getCurrent().clearEvents();
-                System.out.println("All events in the current branch have been deleted.");
+                System.out.println("\nAll events in the current branch have been deleted.");
                 return;
             }
         }
