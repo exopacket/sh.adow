@@ -23,12 +23,23 @@ public class Main {
         if(args.length >= 1) {
             if(args[0].equals("cli")) {
                 switch(args[1]) {
-                    case "list":
-                        listProjects();
-                        break;
                     case "capture":
                         startInteractiveShell();
                         break;
+                    case "configure":
+                        superuser();
+                        interactiveConfigure();
+                        break;
+                    case "configure-defaults":
+                        //superuser();
+                        try {
+                            Config.loadConfig();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        //configure();
+                        break;
+
                 }
                 System.exit(0);
             }
@@ -94,6 +105,18 @@ public class Main {
             }
 
         }
+
+    }
+
+    private static void configure() {
+
+        Config.initConfig();
+
+    }
+
+    private static void interactiveConfigure() {
+
+
 
     }
 

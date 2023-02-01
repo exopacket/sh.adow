@@ -5,18 +5,18 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 
-public class TerminalCommand extends Command {
+public class ShellCommand extends Event {
 
     private String command;
     private ArrayList<String> inputValues = new ArrayList<String>();
     private int index = -1;
 
-    public TerminalCommand(String command) {
+    public ShellCommand(String command) {
         index = Config.getCurrent().size();
         this.command = command;
     }
 
-    public TerminalCommand(JSONObject obj) {
+    public ShellCommand(JSONObject obj) {
 
         this.index = (int) obj.get("index");
         this.command = (String) obj.get("value");

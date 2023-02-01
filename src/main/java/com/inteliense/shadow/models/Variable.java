@@ -2,7 +2,7 @@ package com.inteliense.shadow.models;
 
 import org.json.simple.JSONObject;
 
-public class Variable extends Command {
+public class Variable extends Event {
 
     private int index = -1;
     private String name;

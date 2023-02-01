@@ -1,6 +1,7 @@
 package com.inteliense.shadow.models;
 
 import com.inteliense.shadow.utils.JSON;
+import com.inteliense.shadow.utils.SHA;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -18,17 +19,19 @@ public class Branch {
     private String createdTimestamp;
     private String id;
 
-    private ArrayList<Command> commands = new ArrayList<Command>();
+    private ArrayList<Event> events = new ArrayList<Event>();
 
     public Branch(String name, String notes) {
         this.name = name;
         this.notes = notes;
         this.createdTimestamp = "" + System.currentTimeMillis();
+        this.id = SHA.getSha1("branch_" + this.createdTimestamp);
     }
 
     public Branch(String name) {
         this.name = name;
         this.createdTimestamp = "" + System.currentTimeMillis();
+        this.id = SHA.getSha1("branch_" + this.createdTimestamp);
     }
 
     public Branch(JSONObject object) throws FileNotFoundException {
@@ -54,34 +57,61 @@ public class Branch {
         }
 
         JSONObject obj = JSON.getObject(content);
-        JSONArray commands = (JSONArray) obj.get("events");
+        JSONArray events = (JSONArray) obj.get("events");
 
-        for(int i=0; i<commands.size(); i++) {
-            JSONObject command = (JSONObject) commands.get(i);
+        for(int i=0; i<events.size(); i++) {
+            JSONObject command = (JSONObject) events.get(i);
             String type = (String) command.get("type");
             if(type.equals("var")) {
-                this.commands.add(new Variable(command));
+                this.events.add(new Variable(command));
             } else if(type.equals("pkg")) {
-                this.commands.add(new Package(command));
+                this.events.add(new Package(command));
             } else if(type.equals("file")) {
-                this.commands.add(new EditFile(command));
+                this.events.add(new EditFile(command));
             } else if(type.equals("shell")) {
-                this.commands.add(new TerminalCommand(command));
+                this.events.add(new ShellCommand(command));
             }
         }
 
+    }
+    
+    public JSONObject getJson() {
+        
+        JSONObject obj = new JSONObject();
+        
+        obj.put("branch_id", id);
+        obj.put("branch_name", name);
+        obj.put("branch_notes", notes);
+        obj.put("branch_created", createdTimestamp);
+        
+        return obj;
+        
+    }
+    
+    public JSONObject getEventsObj() {
+        JSONObject object = new JSONObject();
+        JSONArray arr = new JSONArray();
+        for(int i=0; i<events.size(); i++) {
+            arr.add(events.get(i).getObject());
+        }
+        object.put("events", arr);
+        return object;
     }
 
     public void addNotes(String notes) {
         this.notes = notes;
     }
 
-    public void add(Command command) {
-        commands.add(command);
+    public void add(Event command) {
+        events.add(command);
     }
 
     public int size() {
-        return commands.size();
+        return events.size();
+    }
+    
+    public String getId() {
+        return this.id;
     }
 
 }

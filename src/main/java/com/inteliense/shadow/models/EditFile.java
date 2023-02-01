@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-public class EditFile extends Command {
+public class EditFile extends Event {
 
     private String filepath;
     private String savedName;

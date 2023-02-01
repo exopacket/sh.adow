@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import static com.inteliense.shadow.models.Config.projectName;
 
-public class Package extends Command {
+public class Package extends Event {
 
     private String name;
     private int index = -1;
