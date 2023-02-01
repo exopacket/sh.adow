@@ -3,6 +3,7 @@ package com.inteliense.shadow.shell;
 import com.inteliense.shadow.models.Config;
 import com.inteliense.shadow.models.EditFile;
 import com.inteliense.shadow.models.Event;
+import com.inteliense.shadow.models.Package;
 import com.inteliense.shadow.models.ShellCommand;
 import com.inteliense.shadow.utils.RunCommand;
 import com.inteliense.shadow.utils.SHA;
@@ -73,7 +74,9 @@ public class InteractiveShell {
                 for(int x=0; x< commandArr.length; x++) command += commandArr[x] + " ";
 
                 switch(first) {
-
+                    case "install":
+                        install(commandArr);
+                        break;
                     case "edit":
                         edit(pwd, commandArr);
                         break;
@@ -187,6 +190,17 @@ public class InteractiveShell {
 
         } else {
             printHelp();
+        }
+    }
+
+    private static void install(String[] packages) {
+        for(int i=1; i<packages.length; i++) {
+
+            String packageName = packages[i];
+            Package pkg = new Package(packageName);
+            Config.getCurrent().add(pkg);
+            System.out.println("Installed '" + packageName + "'");
+
         }
     }
     private static void branch() {

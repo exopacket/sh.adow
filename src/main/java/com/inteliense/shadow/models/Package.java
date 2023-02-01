@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.inteliense.shadow.models.Config.projectName;
@@ -19,7 +20,8 @@ public class Package extends Event {
         super();
         this.name = name;
         this.index = Config.getCurrent().size();
-        downloadWithDependencies(name);
+        if(Config.isOfflineInstallation) downloadWithDependencies(name);
+        else packageManagerInstall(name);
     }
 
     public Package(JSONObject obj) {
@@ -63,6 +65,18 @@ public class Package extends Event {
         obj.put("files", filesArr);
 
         return obj;
+
+    }
+
+    private void packageManagerInstall(String name) {
+
+        if(Config.flavor.equals("debian")) {
+            try {
+                RunCommand.streamOut("apt install -y " + name);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -119,7 +133,7 @@ public class Package extends Event {
         try {
             if(Config.flavor.equals("debian")) {
                 String path = "/var/cache/apt/archives/" + filename;
-                String toPath = Config.getConfigDir() + projectName + "/packages/";
+                String toPath = Config.getConfigDir() + projectName + "/branches/" + Config.getCurrent().getId() + "/packages/";
                 File dir = new File(toPath);
                 if(!dir.exists()) dir.mkdir();
                 RunCommand.runAndWait("dpkg -i " + path);
