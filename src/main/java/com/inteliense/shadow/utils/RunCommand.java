@@ -1,5 +1,7 @@
 package com.inteliense.shadow.utils;
 
+import com.inteliense.shadow.models.Config;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -146,7 +148,18 @@ public class RunCommand {
     }
 
     public static String getUserHome() {
-        return System.getProperty("user.dir");
+        try {
+            String home = "";
+            if (RunCommand.getUID() == 0) {
+                home = RunCommand.withOut("su -c 'echo $HOME' " + Config.username)[0];
+            } else {
+                home = RunCommand.withOut("echo $HOME")[0];
+            }
+            return home;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "/root/";
     }
 
 }
