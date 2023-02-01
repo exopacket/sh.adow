@@ -16,6 +16,19 @@ public class TerminalCommand extends Command {
         this.command = command;
     }
 
+    public TerminalCommand(JSONObject obj) {
+
+        this.index = (int) obj.get("index");
+        this.command = (String) obj.get("value");
+
+        JSONArray inputArr = (JSONArray) obj.get("input");
+        for(int i=0; i< inputArr.size(); i++) {
+            JSONObject input = (JSONObject) inputArr.get(i);
+            this.inputValues.add((String) input.get("value"));
+        }
+
+    }
+
     public String getType() {
         return "ShellCommand";
     }

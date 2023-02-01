@@ -1,20 +1,59 @@
 package com.inteliense.shadow.models;
 
+import com.inteliense.shadow.utils.JSON;
 import com.inteliense.shadow.utils.RunCommand;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Config {
 
     public static String textEditor = "vi";
-    public static String projectName = "";
+    public static String projectName = "default";
     private static int currentBranch = 0;
-    public static ArrayList<Branch> branches;
+    public static ArrayList<Branch> branches = new ArrayList<Branch>();
     public static String flavor = "debian";
-
     public static ArrayList<String> installed = new ArrayList<String>();
 
-    public static void loadConfig() {
+    public static void loadConfig() throws IOException {
+
+        String globalConfigPath = getConfigDir() + "global.conf";
+        File file = new File(globalConfigPath);
+        if(file.exists()) {
+            Scanner reader = new Scanner(globalConfigPath);
+            String content = "";
+            while(reader.hasNextLine()) {
+                content += reader.nextLine();
+            }
+            JSONObject object = JSON.getObject(content);
+            textEditor = (String) object.get("text_editor");
+            projectName = (String) object.get("project_name");
+            flavor = (String) object.get("os_type");
+        }
+
+        String projectConfigPath = getConfigDir() + projectName + "/" + "project.conf";
+
+        File projectConfig = new File(projectConfigPath);
+        if(!file.exists()) {
+            file.mkdirs();
+            file.createNewFile();
+        } else {
+            Scanner reader = new Scanner(projectConfig);
+            String content = "";
+            while(reader.hasNextLine()) {
+                content += reader.nextLine();
+            }
+            JSONObject project = JSON.getObject(content);
+            JSONArray branchesArr = (JSONArray) project.get("branches");
+            for(int i=0; i<branchesArr.size(); i++) {
+                JSONObject branch = (JSONObject) branchesArr.get(i);
+                branches.add(new Branch(branch));
+            }
+        }
 
     }
 

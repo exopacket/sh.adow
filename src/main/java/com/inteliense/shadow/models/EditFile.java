@@ -1,7 +1,6 @@
 package com.inteliense.shadow.models;
 
 import com.inteliense.shadow.utils.SHA;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -22,6 +21,14 @@ public class EditFile extends Command {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public EditFile(JSONObject obj) {
+
+        this.index = (int) obj.get("index");
+        this.filepath = (String) obj.get("path");
+        this.savedName = (String) obj.get("saved_name");
+
     }
 
     private void saveFile(String content) throws FileNotFoundException {

@@ -20,6 +20,20 @@ public class Package extends Command {
         this.index = Config.getCurrent().size();
         downloadWithDependencies(name);
     }
+
+    public Package(JSONObject obj) {
+
+        this.index = (int) obj.get("index");
+        this.name = (String) obj.get("value");
+
+        JSONArray filesArr = (JSONArray) obj.get("files");
+        for(int i=0; i< filesArr.size(); i++) {
+            JSONObject file = (JSONObject) filesArr.get(i);
+            this.dependencies.add((String) file.get("value"));
+        }
+
+    }
+
     public String getType() {
         return "InstallPackage";
     }

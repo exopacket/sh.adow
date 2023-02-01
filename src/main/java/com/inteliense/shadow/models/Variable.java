@@ -13,6 +13,12 @@ public class Variable extends Command {
         this.value = value;
     }
 
+    public Variable(JSONObject obj) {
+        this.index = (int) obj.get("index");
+        this.name = (String) obj.get("name");
+        this.value = (String) obj.get("value");
+    }
+
     public String getType() {
         return "Variable";
     }
