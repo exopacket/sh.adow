@@ -1,6 +1,6 @@
 package com.inteliense.shadow.utils;
 
-import com.inteliense.shadow.models.Config;
+import com.inteliense.shadow.classes.Config;
 
 import java.io.BufferedReader;
 import java.io.File;

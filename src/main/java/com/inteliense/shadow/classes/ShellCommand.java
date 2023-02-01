@@ -1,4 +1,4 @@
-package com.inteliense.shadow.models;
+package com.inteliense.shadow.classes;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

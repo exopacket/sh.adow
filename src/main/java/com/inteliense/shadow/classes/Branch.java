@@ -1,4 +1,4 @@
-package com.inteliense.shadow.models;
+package com.inteliense.shadow.classes;
 
 import com.inteliense.shadow.utils.JSON;
 import com.inteliense.shadow.utils.SHA;
@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.inteliense.shadow.models.Config.*;
+import static com.inteliense.shadow.classes.Config.*;
 
 public class Branch {
     

@@ -1,7 +1,7 @@
 package com.inteliense.shadow.shell;
 
-import com.inteliense.shadow.models.*;
-import com.inteliense.shadow.models.Package;
+import com.inteliense.shadow.classes.*;
+import com.inteliense.shadow.classes.Package;
 import com.inteliense.shadow.utils.RunCommand;
 import com.inteliense.shadow.utils.SHA;
 

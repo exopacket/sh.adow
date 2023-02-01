@@ -1,4 +1,4 @@
-package com.inteliense.shadow.models;
+package com.inteliense.shadow.classes;
 
 import com.inteliense.shadow.utils.JSON;
 import com.inteliense.shadow.utils.RunCommand;

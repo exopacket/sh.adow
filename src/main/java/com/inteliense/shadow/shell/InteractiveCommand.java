@@ -83,17 +83,17 @@ public abstract class InteractiveCommand {
             try {
                 while(!closed) {
                     while (System.in.available() == 0 && !closed) Thread.sleep(250);
-                    if (closed) return;
+                    if (closed) break;
                     while (scnr.hasNextLine()) {
                         String input = scnr.nextLine();
                         if(input.trim().toLowerCase().equals("exit")) {
                             closed = true;
                             break;
                         } else {
-                               writer.write(input);
-                               writer.newLine();
-                               writer.flush();
-                               inputReceived(input);
+                            writer.write(input);
+                            writer.newLine();
+                            writer.flush();
+                            inputReceived(input);
                         }
                         break;
                     }

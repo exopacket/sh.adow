@@ -1,4 +1,4 @@
-package com.inteliense.shadow.models;
+package com.inteliense.shadow.classes;
 
 import com.inteliense.shadow.utils.RunCommand;
 import org.json.simple.JSONArray;
@@ -7,7 +7,7 @@ import org.json.simple.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.inteliense.shadow.models.Config.projectName;
+import static com.inteliense.shadow.classes.Config.projectName;
 
 public class Package extends Event {
 
