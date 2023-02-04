@@ -211,7 +211,7 @@ public class Package extends Event {
         for(int i=1; i<cmdOutput.length; i++) {
             String line = cmdOutput[i];
             if(line.contains("Depends:")) {
-                String stripped = line.replaceAll("(Pre)?(Depends\\:)", "").replaceAll("[\\s\\|]", "");
+                String stripped = line.replaceAll("(Pre)?(Depends\\:)", "").replaceAll("[\\s\\|\\<\\>]", "");
                 if(Config.dirtyDownload) {
                     if(!dependencies.contains(stripped)) {
                         System.out.println(ANSI_GREEN + "Dependency '" + stripped + "' is staged for download");
