@@ -111,11 +111,7 @@ public class Package extends Event {
             boolean toAdd = true;
             if(filenames.length == 1)
                 if(filenames[0].trim().equals("")) continue;
-            if(dependency.equals(name)) {
-                System.out.println(ANSI_GREEN + "Download with dependencies for '" + name + "' was successful" + ANSI_RESET);
-            } else {
-                System.out.println(ANSI_YELLOW + "Downloaded dependency '" + dependency + "' for '" + name + "'" + ANSI_RESET);
-            }
+            if(Config.getInstalled().contains(dependency)) continue;
             for(int k=0; k<filenames.length; k++) {
                 dependencies.add(filenames[k]);
                 if(toAdd) {
@@ -125,6 +121,11 @@ public class Package extends Event {
                     }
                 }
                 copyPackage(filenames[k], dependency);
+            }
+            if(dependency.equals(name)) {
+                System.out.println(ANSI_GREEN + "Download with dependencies for '" + name + "' was successful" + ANSI_RESET);
+            } else {
+                System.out.println(ANSI_YELLOW + "Downloaded dependency '" + dependency + "' for '" + name + "'" + ANSI_RESET);
             }
         }
     }
