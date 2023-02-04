@@ -118,6 +118,7 @@ public class Config {
         branches.add(defaultBranch);
         Config.flavor = flavor;
         Config.isOfflineInstallation = isOfflineInstallation;
+        Config.dirtyDownload = dirtyDownload;
         setUsername();
         saveConfig();
         if(editSudoers) editSudoers();
