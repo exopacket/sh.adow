@@ -6,9 +6,6 @@ import com.inteliense.shadow.shell.InteractiveCommand;
 import com.inteliense.shadow.shell.InteractiveShell;
 import com.inteliense.shadow.utils.RunCommand;
 import com.inteliense.shadow.utils.SHA;
-
-import java.io.IOException;
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Main {

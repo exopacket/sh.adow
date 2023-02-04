@@ -14,6 +14,11 @@ public class Package extends Event {
     private String name;
     private int index = -1;
     private ArrayList<String> dependencies = new ArrayList<String>();
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
 
     public Package(String name) {
         super();
@@ -83,8 +88,14 @@ public class Package extends Event {
     private void downloadWithDependencies(String name) {
 
         if(checkInstalled(name)) {
-            if(!Config.getInstalled().contains(name)) {
-                Config.getInstalled().add(name);
+            System.out.print(ANSI_YELLOW + "Package '" + name + "' is already installed on this system. ");
+            if(Config.dirtyDownload) {
+                System.out.println("Downloading anyways..." + ANSI_RESET);
+            } else {
+                System.out.println("Skipping installation...");
+                if(!Config.getInstalled().contains(name)) {
+                    Config.getInstalled().add(name);
+                }
                 return;
             }
         }
@@ -94,8 +105,12 @@ public class Package extends Event {
         allDependencies.add(name);
         for(int x=0; x<allDependencies.size(); x++) {
             String dependency = allDependencies.get(x);
-            if(checkInstalled(dependency)) continue;
             String[] filenames = downloadPackage(dependency);
+            if(dependency.equals(name)) {
+                System.out.println(ANSI_GREEN + "Download with dependencies for '" + name + "' was successful" + ANSI_RESET);
+            } else {
+                System.out.println(ANSI_YELLOW + "Downloaded dependency '" + dependency + "' for '" + name + "'" + ANSI_RESET);
+            }
             boolean toAdd = true;
             if(filenames.length == 1)
                 if(filenames[0].trim().equals("")) continue;
@@ -107,7 +122,7 @@ public class Package extends Event {
                         Config.getInstalled().add(dependency);
                     }
                 }
-                copyPackage(filenames[k]);
+                copyPackage(filenames[k], dependency);
             }
         }
     }
@@ -129,14 +144,14 @@ public class Package extends Event {
 
     }
 
-    private static void copyPackage(String filename) {
+    private static void copyPackage(String filename, String packageName) {
         try {
             if(Config.flavor.equals("debian")) {
                 String path = "/var/cache/apt/archives/" + filename;
                 String toPath = Config.getConfigDir() + projectName + "/branches/" + Config.getCurrent().getId() + "/packages/";
                 File dir = new File(toPath);
                 if(!dir.exists()) dir.mkdir();
-                RunCommand.runAndWait("dpkg -i " + path);
+                if(!checkInstalled(packageName)) RunCommand.runAndWait("dpkg -i " + path);
                 RunCommand.runAndWait("mv " + path + " " + toPath + filename);
             }
         } catch (Exception e) {
@@ -178,9 +193,18 @@ public class Package extends Event {
             String line = cmdOutput[i];
             if(line.contains("Depends:")) {
                 String stripped = line.replaceAll("(Depends\\:)", "").replaceAll("[\\s\\|\\<\\>]", "");
-                if(!checkInstalled(stripped)) {
+                if(Config.dirtyDownload) {
+                    System.out.println(ANSI_GREEN + "Dependency '" + stripped + "' is staged for download");
                     dependencies.add(stripped);
                     dependencies = parseDependencies(listDependencies(stripped), dependencies);
+                } else {
+                    if (!checkInstalled(stripped)) {
+                        System.out.println(ANSI_GREEN + "Dependency '" + stripped + "' is staged for download");
+                        dependencies.add(stripped);
+                        dependencies = parseDependencies(listDependencies(stripped), dependencies);
+                    } else {
+                        System.out.println(ANSI_YELLOW + "Dependency '" + stripped + "' is already installed on this system");
+                    }
                 }
             }
         }

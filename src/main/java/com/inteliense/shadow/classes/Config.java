@@ -21,6 +21,7 @@ public class Config {
     public static String flavor = "debian";
     public static ArrayList<String> installed = new ArrayList<String>();
     public static boolean isOfflineInstallation = true;
+    public static boolean dirtyDownload = false;
 
     public static boolean loadConfig() {
 
@@ -39,6 +40,7 @@ public class Config {
                 projectName = (String) object.get("project_name");
                 flavor = (String) object.get("os_type");
                 isOfflineInstallation = (boolean) object.get("offline_install");
+                dirtyDownload = (boolean) object.get("dirty_download");
 
                 JSONArray installedArr = (JSONArray) object.get("installed_packages");
                 for (int i = 0; i < installedArr.size(); i++) {

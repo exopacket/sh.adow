@@ -12,7 +12,7 @@ To run the interactive shell<br>
 # To-do
 
 - [ ] create interactive interface for listing 'last' commands by ranges
-- [ ] check if package is already installed, available, and print more information about installation
+- [X] check if package is already installed, available, and print more information about installation
 - [ ] write logic for variables
 - [X] rewrite prompts for the 'branch' command
 - [ ] write logic for showInfo() function

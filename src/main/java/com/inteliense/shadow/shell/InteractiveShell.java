@@ -187,7 +187,7 @@ public class InteractiveShell {
         if(command.length == 1) {
             System.out.println(ANSI_GREEN + "LAST COMMAND" + ANSI_RESET);
             System.out.println("Type 'remove'/'rm' or 'delete'/'del' to ignore a command.");
-            System.out.println("To show the next previous command, leave blank and press enter.");
+            System.out.println("To show the preceding previous command, leave blank and press enter.");
             System.out.println("When finished, type 'exit'.");
             System.out.println();
             int curr = 1;
