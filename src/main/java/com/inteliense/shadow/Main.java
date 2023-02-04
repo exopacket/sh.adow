@@ -211,6 +211,7 @@ public class Main {
         String projectName;
         String branchName;
         String isOffline;
+        String dirtyDownload = "no";
 
         while (true) {
             System.out.print("Enter your Linux base OS type [fedora|debian]: ");
@@ -229,6 +230,17 @@ public class Main {
             else System.err.println("Invalid entry.");
         }
 
+        if(isOffline.equals("yes")) {
+
+            while (true) {
+                System.out.print("Download packages when already installed on current system? [yes|no]: ");
+                dirtyDownload = scnr.nextLine().toLowerCase();
+                if (dirtyDownload.equals("yes") || dirtyDownload.equals("no")) break;
+                else System.err.println("Invalid entry.");
+            }
+
+        }
+
         System.out.print("Enter the name of your initial project: ");
         projectName = scnr.nextLine().toLowerCase();
 
@@ -238,7 +250,7 @@ public class Main {
         System.out.print("Update sudoers file for sudo support? [yes/no]: ");
         String val = scnr.nextLine().toLowerCase().trim();
 
-        Config.initConfig(textEditor, projectName, branchName, flavor, isOffline.equals("yes"), val.equals("yes"));
+        Config.initConfig(textEditor, projectName, branchName, flavor, isOffline.equals("yes"), dirtyDownload.equals("yes"), val.equals("yes"));
 
     }
 

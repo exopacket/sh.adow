@@ -110,7 +110,7 @@ public class Config {
 
     }
 
-    public static void initConfig(String textEditor, String projectName, String firstBranchName, String flavor, boolean isOfflineInstallation, boolean editSudoers) {
+    public static void initConfig(String textEditor, String projectName, String firstBranchName, String flavor, boolean isOfflineInstallation, boolean dirtyDownload, boolean editSudoers) {
 
         Config.textEditor = textEditor;
         Config.projectName = projectName;
@@ -186,6 +186,7 @@ public class Config {
         obj.put("project_name", projectName);
         obj.put("os_type", flavor);
         obj.put("offline_install", isOfflineInstallation);
+        obj.put("dirty_download", dirtyDownload);
 
         JSONArray installedArr = new JSONArray();
 
