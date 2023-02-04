@@ -101,7 +101,9 @@ public class Package extends Event {
         }
 
         ArrayList<String> allDependencies = new ArrayList<String>();
-        allDependencies = parseDependencies(listDependencies(name), allDependencies);
+        String[] initialList = listDependencies(name);
+        if(initialList == null) return;
+        allDependencies = parseDependencies(initialList, allDependencies);
         allDependencies.add(name);
         for(int x=0; x<allDependencies.size(); x++) {
             String dependency = allDependencies.get(x);
@@ -161,8 +163,16 @@ public class Package extends Event {
 
     private static String[] listDependencies(String packageName) {
         try {
-            if(Config.flavor.equals("debian"))
-                return RunCommand.withOut("apt-cache depends " + packageName);
+            if(Config.flavor.equals("debian")) {
+                String[] res = RunCommand.withOut("apt-cache depends " + packageName);
+                if(res.length == 1) {
+                    if(res[0].trim().equals("")) {
+                        System.out.println(ANSI_RED + "The package '" + packageName + "' was not found." + ANSI_RESET);
+                        return null;
+                    }
+                }
+                return res;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -189,21 +199,29 @@ public class Package extends Event {
 
     private static ArrayList<String> parseDependencies(String[] cmdOutput, ArrayList<String> dependencies) {
 
+        if(cmdOutput == null) {
+            return dependencies;
+        }
+
         for(int i=1; i<cmdOutput.length; i++) {
             String line = cmdOutput[i];
             if(line.contains("Depends:")) {
                 String stripped = line.replaceAll("(Depends\\:)", "").replaceAll("[\\s\\|\\<\\>]", "");
                 if(Config.dirtyDownload) {
-                    System.out.println(ANSI_GREEN + "Dependency '" + stripped + "' is staged for download");
-                    dependencies.add(stripped);
-                    dependencies = parseDependencies(listDependencies(stripped), dependencies);
-                } else {
-                    if (!checkInstalled(stripped)) {
+                    if(!dependencies.contains(stripped)) {
                         System.out.println(ANSI_GREEN + "Dependency '" + stripped + "' is staged for download");
                         dependencies.add(stripped);
                         dependencies = parseDependencies(listDependencies(stripped), dependencies);
-                    } else {
-                        System.out.println(ANSI_YELLOW + "Dependency '" + stripped + "' is already installed on this system");
+                    }
+                } else {
+                    if(!dependencies.contains(stripped)) {
+                        if (!checkInstalled(stripped)) {
+                            System.out.println(ANSI_GREEN + "Dependency '" + stripped + "' is staged for download");
+                            dependencies.add(stripped);
+                            dependencies = parseDependencies(listDependencies(stripped), dependencies);
+                        } else {
+                            System.out.println(ANSI_YELLOW + "Dependency '" + stripped + "' is already installed on this system");
+                        }
                     }
                 }
             }

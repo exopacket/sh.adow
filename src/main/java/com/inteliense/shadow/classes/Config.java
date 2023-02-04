@@ -27,6 +27,8 @@ public class Config {
 
         try {
 
+            setUsername();
+
             String globalConfigPath = getConfigDir() + "global.conf";
             File file = new File(globalConfigPath);
             if (file.exists()) {
@@ -47,6 +49,9 @@ public class Config {
                     installed.add((String) installedArr.get(i));
                 }
 
+            } else {
+                System.err.println("Could not find configuration. Exiting...");
+                return false;
             }
 
             String projectConfigPath = getConfigDir() + projectName + "/" + "project.conf";
@@ -67,9 +72,10 @@ public class Config {
                     if (branchData.getId().equals(currentBranchId)) currentBranch = i;
                     branches.add(branchData);
                 }
+            }  else {
+                System.err.println("Could not find configuration. Exiting...");
+                return false;
             }
-
-            setUsername();
 
             return true;
 

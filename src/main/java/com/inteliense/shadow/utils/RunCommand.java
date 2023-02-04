@@ -67,6 +67,7 @@ public class RunCommand {
 
         ProcessBuilder builder = new ProcessBuilder();
         builder.command("/bin/sh", "-c", cmd);
+        //builder.redirectError(ProcessBuilder.Redirect.INHERIT);
         Process process = builder.start();
 
         StringBuilder output = new StringBuilder();
