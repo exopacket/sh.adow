@@ -107,11 +107,11 @@ public class Package extends Event {
         allDependencies.add(name);
         for(int x=0; x<allDependencies.size(); x++) {
             String dependency = allDependencies.get(x);
+            if(Config.getInstalled().contains(dependency)) continue;
             String[] filenames = downloadPackage(dependency);
             boolean toAdd = true;
             if(filenames.length == 1)
                 if(filenames[0].trim().equals("")) continue;
-            if(Config.getInstalled().contains(dependency)) continue;
             for(int k=0; k<filenames.length; k++) {
                 dependencies.add(filenames[k]);
                 if(toAdd) {
