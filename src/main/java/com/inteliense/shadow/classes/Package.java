@@ -108,14 +108,14 @@ public class Package extends Event {
         for(int x=0; x<allDependencies.size(); x++) {
             String dependency = allDependencies.get(x);
             String[] filenames = downloadPackage(dependency);
+            boolean toAdd = true;
+            if(filenames.length == 1)
+                if(filenames[0].trim().equals("")) continue;
             if(dependency.equals(name)) {
                 System.out.println(ANSI_GREEN + "Download with dependencies for '" + name + "' was successful" + ANSI_RESET);
             } else {
                 System.out.println(ANSI_YELLOW + "Downloaded dependency '" + dependency + "' for '" + name + "'" + ANSI_RESET);
             }
-            boolean toAdd = true;
-            if(filenames.length == 1)
-                if(filenames[0].trim().equals("")) continue;
             for(int k=0; k<filenames.length; k++) {
                 dependencies.add(filenames[k]);
                 if(toAdd) {
@@ -134,7 +134,11 @@ public class Package extends Event {
         try {
             if(Config.flavor.equals("debian")) {
                 RunCommand.runAndWait("rm /var/cache/apt/archives/*.deb");
-                RunCommand.runAndWait("apt install --download-only " + packageName);
+                if(Config.dirtyDownload) {
+                    RunCommand.runAndWait("apt install --download-only --reinstall " + packageName);
+                } else {
+                    RunCommand.runAndWait("apt install --download-only " + packageName);
+                }
                 //RunCommand.runAndWait("og-apt install --download-only " + packageName);
                 return RunCommand.withOut("ls /var/cache/apt/archives | grep .deb");
             }
