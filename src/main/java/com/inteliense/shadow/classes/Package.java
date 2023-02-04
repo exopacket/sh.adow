@@ -210,7 +210,7 @@ public class Package extends Event {
 
         for(int i=1; i<cmdOutput.length; i++) {
             String line = cmdOutput[i];
-            if(line.contains("Depends:") && !line.contains("<")) {
+            if(line.contains("Depends:")) {
                 String stripped = line.replaceAll("(Pre)?(Depends\\:)", "").replaceAll("[\\s\\|]", "");
                 if(Config.dirtyDownload) {
                     if(!dependencies.contains(stripped)) {
