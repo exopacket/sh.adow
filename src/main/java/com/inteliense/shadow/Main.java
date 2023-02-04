@@ -242,10 +242,10 @@ public class Main {
         }
 
         System.out.print("Enter the name of your initial project: ");
-        projectName = scnr.nextLine().toLowerCase();
+        projectName = scnr.nextLine().toLowerCase().replaceAll("\\s+", "_");
 
         System.out.print("Enter the name of your initial branch: ");
-        branchName = scnr.nextLine().toLowerCase();
+        branchName = scnr.nextLine().toLowerCase().replaceAll("\\s+", "_");
 
         System.out.print("Update sudoers file for sudo support? [yes/no]: ");
         String val = scnr.nextLine().toLowerCase().trim();
