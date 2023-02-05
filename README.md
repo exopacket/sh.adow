@@ -12,7 +12,7 @@ To run the interactive shell<br>
 To create a shell script of your history (limited functionality)<br>
 `java -jar shadow.jar cli bootstrap export /path/to/save/script`<br>
 
-<b>This is a powerful application. At this stage, technical knowledge is required for successful use. Use at your own risk. (Don't run the output unless you know what you're doing) </b> 
+<b>This is a powerful application. At this stage, technical knowledge is required for successful use. Use at your own risk. </b> (Don't run the output unless you know what you're doing)
 
 # To-do
 
