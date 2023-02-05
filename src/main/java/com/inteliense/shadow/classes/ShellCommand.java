@@ -44,15 +44,18 @@ public class ShellCommand extends Event {
 
     public String[] getShellCode(String[] args) {
 
+        String userHome = "/home/" + Config.username;
+        String fixDir = dir.replaceAll(userHome, "/home/${INSTALL_USER}");
+
         if(inputValues.size() == 0) {
-            return new String[]{command};
+            return new String[]{"cd " + fixDir + " && " + command};
         } else {
             String val = "{ ";
             for(int i=0; i<inputValues.size(); i++) {
                 val += "echo \"" + inputValues.get(i) + "\"; ";
             }
             val += "} | " + command;
-            return new String[]{val};
+            return new String[]{"cd " + fixDir + " && " + val};
         }
 
     }
