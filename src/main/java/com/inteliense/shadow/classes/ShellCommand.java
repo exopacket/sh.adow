@@ -43,7 +43,17 @@ public class ShellCommand extends Event {
     }
 
     public String[] getShellCode(String[] args) {
-        return new String[]{this.command};
+
+        if(inputValues.size() == 0) {
+            return new String[]{command};
+        } else {
+            String val = "{ ";
+            for(int i=0; i<inputValues.size(); i++) {
+                val += "echo \"" + inputValues.get(i) + "\"; ";
+            }
+            val += "} | " + command;
+            return new String[]{val};
+        }
     }
 
     public void addInputValue(String value) {
