@@ -54,11 +54,13 @@ public class ShellCommand extends Event {
             val += "} | " + command;
             return new String[]{val};
         }
+
     }
 
     public void addInputValue(String value) {
         this.inputValues.add(value);
     }
+
     public JSONObject getObject() {
 
         JSONObject obj = new JSONObject();

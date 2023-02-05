@@ -57,7 +57,7 @@ public class Package extends Event {
 
         for(int i=0; i<dependencies.size(); i++) {
             if(Config.flavor.equals("debian")) {
-                String line = "dpkg -i \"${dir}/store/packages/" + dependencies.get(i) + "\"";
+                String line = "sudo dpkg -i \"${dir}/store/packages/" + dependencies.get(i) + "\"";
                 lines.add(line);
             }
         }
@@ -91,7 +91,7 @@ public class Package extends Event {
 
         if(Config.flavor.equals("debian")) {
             try {
-                RunCommand.streamOut("apt install -y " + name);
+                RunCommand.streamOut("sudo apt install -y " + name);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -148,11 +148,11 @@ public class Package extends Event {
 
         try {
             if(Config.flavor.equals("debian")) {
-                RunCommand.runAndWait("rm /var/cache/apt/archives/*.deb");
+                RunCommand.runAndWait("sudo rm /var/cache/apt/archives/*.deb");
                 if(Config.dirtyDownload) {
-                    RunCommand.runAndWait("apt install --download-only --reinstall " + packageName);
+                    RunCommand.runAndWait("sudo apt install --download-only --reinstall " + packageName);
                 } else {
-                    RunCommand.runAndWait("apt install --download-only " + packageName);
+                    RunCommand.runAndWait("sudo apt install --download-only " + packageName);
                 }
                 //RunCommand.runAndWait("og-apt install --download-only " + packageName);
                 return RunCommand.withOut("ls /var/cache/apt/archives | grep .deb");
@@ -173,7 +173,7 @@ public class Package extends Event {
                 File dir = new File(toPath);
                 if(!dir.exists()) dir.mkdir();
                 if(!checkInstalled(packageName)) RunCommand.runAndWait("dpkg -i " + path);
-                RunCommand.runAndWait("mv " + path + " " + toPath + filename);
+                RunCommand.runAndWait("sudo mv " + path + " " + toPath + filename);
             }
         } catch (Exception e) {
             e.printStackTrace();
