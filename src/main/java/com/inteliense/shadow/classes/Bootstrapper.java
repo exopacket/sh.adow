@@ -62,7 +62,7 @@ public class Bootstrapper {
         pw.println("#!/bin/bash");
         pw.println();
         pw.println("DIR=${1:-$(pwd)}");
-        pw.println("INSTALL_USER=${SUDO_USER:-$USER");
+        pw.println("INSTALL_USER=${SUDO_USER:-$USER}");
         //pw.println("ls store && tar -xzf store.tar.gz");
 
         ArrayList<Event> events = branch.getEventList();
