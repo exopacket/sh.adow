@@ -61,7 +61,7 @@ public class Bootstrapper {
 
         pw.println("#!/bin/bash");
         pw.println();
-        pw.println("dir=$(pwd)");
+        pw.println("DIR=${1:-.}");
         //pw.println("ls store && tar -xzf store.tar.gz");
 
         ArrayList<Event> events = branch.getEventList();

@@ -57,7 +57,7 @@ public class Package extends Event {
 
         for(int i=0; i<dependencies.size(); i++) {
             if(Config.flavor.equals("debian")) {
-                String line = "sudo dpkg -i \"${dir}/store/packages/" + dependencies.get(i) + "\"";
+                String line = "sudo dpkg -i \"${DIR}/store/packages/" + dependencies.get(i) + "\"";
                 lines.add(line);
             }
         }

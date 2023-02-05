@@ -54,7 +54,7 @@ public class EditFile extends Event {
     }
 
     public String[] getShellCode(String[] args) {
-        return new String[]{"cp \"${dir}/store/files/" + savedName + "\" \"" + filepath + "\""};
+        return new String[]{"cp \"${DIR}/store/files/" + savedName + "\" \"" + filepath + "\""};
     }
 
     public JSONObject getObject() {
