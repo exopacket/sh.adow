@@ -3,6 +3,7 @@ package com.inteliense.shadow.classes;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Bootstrapper {
 
@@ -27,34 +28,56 @@ public class Bootstrapper {
 
         try {
 
-            String outPath = args[3];
-            File file = new File(outPath);
-            PrintWriter pw = new PrintWriter(file);
+            Scanner scnr = new Scanner(System.in);
 
-            ArrayList<Branch> branches = Config.branches;
-            ArrayList<String> toOverlook = Config.overlookList;
-            String[] _args = new String[10];
-
-            pw.println("#!/bin/bash");
-
-            for(int i=0; i<branches.size(); i++) {
-                Branch branch = branches.get(i);
-                ArrayList<Event> events = branch.getEventList();
-                for(int x=0; x<events.size(); x++) {
-                    Event event = events.get(x);
-                    String[] code = event.getShellCode(_args);
-                    for(int y=0; y<code.length; y++) {
-                        pw.println(code[y]);
-                    }
-                }
+            String outPath = "";
+            if(args.length == 4) {
+                outPath = args[3];
+            } else {
+                System.out.print("Enter the directory to place the new files: ");
+                outPath = scnr.nextLine();
             }
 
-            pw.flush();
-            pw.close();
+            outPath += Config.fixPath(outPath) + Config.projectName;
+            ArrayList<Branch> branches = Config.branches;
+
+            for(int i=0; i<branches.size(); i++) {
+                createShellFile(outPath, branches.get(i));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    private static void createShellFile(String outPath, Branch branch) throws Exception {
+
+        File file = new File(Config.fixPath(outPath) + branch.getName() + ".sh");
+        PrintWriter pw = new PrintWriter(file);
+
+        pw.println("#!/bin/bash");
+        pw.println();
+        pw.println("dir=$(pwd)");
+        //pw.println("ls store && tar -xzf store.tar.gz");
+
+        ArrayList<Event> events = branch.getEventList();
+        for(int x=0; x<events.size(); x++) {
+            Event event = events.get(x);
+            String[] code = event.getShellCode(new String[]{});
+            for(int y=0; y<code.length; y++) {
+                pw.println(code[y]);
+            }
+        }
+
+        pw.flush();
+        pw.close();
+
+    }
+
+    private static void createStore(String outPath, Branch branch) {
+
+
 
     }
 

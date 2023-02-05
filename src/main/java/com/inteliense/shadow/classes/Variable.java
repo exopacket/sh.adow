@@ -16,9 +16,7 @@ public class Variable extends Event {
     }
 
     public Variable(JSONObject obj) {
-
         super();
-
         this.index = Integer.parseInt((String) obj.get("index"));
         this.name = (String) obj.get("name");
         this.value = (String) obj.get("value");
