@@ -53,6 +53,9 @@ public class Bootstrapper {
 
     private static void createShellFile(String outPath, Branch branch) throws Exception {
 
+        File dir = new File(Config.fixPath(outPath));
+        if(!dir.exists()) dir.mkdirs();
+
         File file = new File(Config.fixPath(outPath) + branch.getName() + ".sh");
         PrintWriter pw = new PrintWriter(file);
 
