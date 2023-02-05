@@ -34,7 +34,7 @@ public class Variable extends Event {
 
     @Override
     public String[] getShellCode(String[] args) {
-        return new String[]{"export $" + this.name + "=" + this.value};
+        return new String[]{"export " + this.name + "=" + this.value};
     }
 
     public JSONObject getObject() {
