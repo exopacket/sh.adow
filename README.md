@@ -18,7 +18,7 @@ To run the interactive shell<br>
 - [ ] write logic for showInfo() function
 - [ ] write help command output
 - [ ] add commands to skip in config (will not skip if output is redirected)
-- [ ] branch merge feature / generate shell script for project
+- [-] branch merge feature / generate shell script for project
 - [ ] generate archive for offline projects
 - [ ] write shell code wrappers for the java application
 

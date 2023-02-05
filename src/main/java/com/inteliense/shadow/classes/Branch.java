@@ -73,6 +73,10 @@ public class Branch {
         }
 
     }
+
+    public ArrayList<Event> getEventList() {
+        return events;
+    }
     
     public JSONObject getJson() {
         

@@ -51,6 +51,20 @@ public class Package extends Event {
         return "InstallPackage";
     }
 
+    public String[] getShellCode(String[] args) {
+
+        ArrayList<String> lines = new ArrayList<String>();
+
+        for(int i=0; i<dependencies.size(); i++) {
+            if(Config.flavor.equals("debian")) {
+                String line = "dpkg -i \"${dir}/store/packages/" + dependencies.get(i) + "\"";
+                lines.add(line);
+            }
+        }
+
+        return lines.toArray(String[]::new);
+    }
+
     public JSONObject getObject() {
 
         JSONObject obj = new JSONObject();

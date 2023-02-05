@@ -22,6 +22,7 @@ public class Config {
     public static ArrayList<String> installed = new ArrayList<String>();
     public static boolean isOfflineInstallation = true;
     public static boolean dirtyDownload = false;
+    public static ArrayList<String> overlookList = new ArrayList<String>();
 
     public static boolean loadConfig() {
 

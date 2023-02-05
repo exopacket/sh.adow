@@ -32,6 +32,11 @@ public class Variable extends Event {
         return "Variable";
     }
 
+    @Override
+    public String[] getShellCode(String[] args) {
+        return new String[]{"export $" + this.name + "=" + this.value};
+    }
+
     public JSONObject getObject() {
         JSONObject obj = new JSONObject();
         obj.put("index", "" + this.index);

@@ -13,6 +13,8 @@ public abstract class Event {
 
     public abstract String getType();
 
+    public abstract String[] getShellCode(String[] args);
+
     public abstract JSONObject getObject();
 
     public abstract String getHistoryString();

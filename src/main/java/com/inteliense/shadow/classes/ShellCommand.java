@@ -42,6 +42,10 @@ public class ShellCommand extends Event {
         return "ShellCommand";
     }
 
+    public String[] getShellCode(String[] args) {
+        return new String[]{this.command};
+    }
+
     public void addInputValue(String value) {
         this.inputValues.add(value);
     }

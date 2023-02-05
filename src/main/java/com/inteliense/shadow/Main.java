@@ -43,9 +43,13 @@ public class Main {
                         loadConfig();
                         project(args);
                         break;
-                    case "bootstrapper":
+                    case "bootstrap":
+                        if(args.length < 3) {
+                            printHelp();
+                            System.exit(0);
+                        }
                         loadConfig();
-                        bootstrapper();
+                        bootstrapper(args);
                         break;
                     case "configure":
                         superuser();
@@ -146,8 +150,19 @@ public class Main {
         }
     }
 
-    private static void bootstrapper() {
-        Bootstrapper.configure();
+    private static void bootstrapper(String[] args) {
+
+        if(args[2].toLowerCase().equals("prepare")) {
+            Bootstrapper.prepare(args);
+        } else if(args[2].toLowerCase().equals("merge")) {
+            Bootstrapper.merge(args);
+        } else if(args[2].toLowerCase().equals("export")) {
+            Bootstrapper.export(args);
+        } else {
+            printHelp();
+            System.exit(0);
+        }
+
     }
 
     private static void install(String[] args) {
