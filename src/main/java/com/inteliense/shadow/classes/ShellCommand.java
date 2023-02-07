@@ -25,6 +25,7 @@ public class ShellCommand extends Event {
 
         this.index = Integer.parseInt((String) obj.get("index"));
         this.command = (String) obj.get("value");
+        this.dir = (String) obj.get("dir");
 
         JSONArray inputArr = (JSONArray) obj.get("input");
         for(int i=0; i< inputArr.size(); i++) {
@@ -45,17 +46,17 @@ public class ShellCommand extends Event {
     public String[] getShellCode(String[] args) {
 
         String userHome = "/home/" + Config.username;
-        String fixDir = dir.replaceAll(userHome, "/home/${INSTALL_USER}");
+        String fixDir = dir.replaceAll(userHome, "/home/\\$\\{INSTALL_USER\\}");
 
         if(inputValues.size() == 0) {
-            return new String[]{"cd " + fixDir + " && " + command};
+            return new String[]{"cd \"" + fixDir + "\" && " + command};
         } else {
             String val = "{ ";
             for(int i=0; i<inputValues.size(); i++) {
                 val += "echo \"" + inputValues.get(i) + "\"; ";
             }
             val += "} | " + command;
-            return new String[]{"cd " + fixDir + " && " + val};
+            return new String[]{"cd \"" + fixDir + "\" && " + val};
         }
 
     }

@@ -38,7 +38,7 @@ public class Bootstrapper {
                 outPath = scnr.nextLine();
             }
 
-            outPath += Config.fixPath(outPath) + Config.projectName;
+            outPath = Config.fixPath(outPath) + Config.projectName;
             ArrayList<Branch> branches = Config.branches;
 
             for(int i=0; i<branches.size(); i++) {
@@ -57,6 +57,7 @@ public class Bootstrapper {
         if(!dir.exists()) dir.mkdirs();
 
         File file = new File(Config.fixPath(outPath) + branch.getName() + ".sh");
+        System.out.println(Config.fixPath(outPath) + branch.getName() + ".sh");
         PrintWriter pw = new PrintWriter(file);
 
         pw.println("#!/bin/bash");
